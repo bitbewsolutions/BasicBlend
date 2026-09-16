@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ServiceIndex from '../../components/ServiceIndex.astro';
+import AudienceGrid from '../../components/AudienceGrid.astro';
+import ProcessSteps from '../../components/ProcessSteps.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { process } from '../../data/services';
+---
+
+<Base
+  title="Services — Branding, Websites, Social Media & Ads | BasicBlend"
+  description="Branding and design, websites and platforms, social media, paid ads, content production, influencer marketing and Google Business Profile management from BasicBlend, Chandigarh."
+>
+  <PageHero
+    title="One studio, the whole blend"
+    lead="Branding, websites, content, social and ads. Take one service on its own, or bring us in for all of it and let one team keep everything consistent."
+    crumbs={[{ label: 'Services' }]}
+  >
+    <div class="btn-row">
+      <a class="btn" href="/contact/">Start a project <span class="btn__arrow" aria-hidden="true">&rarr;</span></a>
+      <a class="btn btn--ghost" href="/work/">See our work</a>
+    </div>
+  </PageHero>
+
+  <section class="section" aria-labelledby="all-title">
+    <div class="shell">
+      <h2 class="vh" id="all-title">All services</h2>
+      <ServiceIndex variant="full" />
+    </div>
+  </section>
+
+  <section class="section on-paper" aria-labelledby="fit-title">
+    <div class="shell">
+      <SectionHead
+        label="Who it's for"
+        id="fit-title"
+        title="Built around your stage"
+        lead="A business opening its doors needs different things from one ready to scale. We start from where you are."
+        align="wide"
+      />
+      <AudienceGrid />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="how-title">
+    <div class="shell">
+      <SectionHead label="Process" id="how-title" title="How every project runs" align="wide" />
+      <ProcessSteps steps={process} />
+    </div>
+  </section>
+
+  <CtaBand title="Not sure what you need?" lead="Tell us about the business and where you want it to go. We will recommend a starting point, even if that is just one service." />
+</Base>

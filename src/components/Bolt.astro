@@ -1,0 +1,43 @@
+---
+/**
+ * Signature 3 — the bolt, traced from the wordmark's struck-through "I".
+ *
+ * Sizing goes through the `size` prop, not through a class the parent styles.
+ * Astro's scoped styles do not reach a child component's root element, so a
+ * parent rule like `.my-bolt { width: 1rem }` would silently do nothing. An
+ * explicit prop keeps sizing local and impossible to get wrong.
+ */
+interface Props {
+  /** Any CSS length. `em` resolves against the surrounding text size. */
+  size?: string;
+  /** Draw the bolt once on entry, like a press striking. */
+  strike?: boolean;
+  class?: string;
+}
+const { size, strike = false, class: cls = '', ...rest } = Astro.props;
+---
+
+<svg
+  {...rest}
+  class:list={['bolt', cls, strike && 'bolt--strike']}
+  style={size ? `width:${size}` : undefined}
+  viewBox="0 0 12 26"
+  fill="none"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M8.2 1 1 14.4h3.9L3.6 25 11 11.2H7.1L8.2 1Z" fill="currentColor" />
+</svg>
+
+<style>
+  .bolt--strike path {
+    clip-path: inset(0 0 100% 0);
+    animation: strike 620ms cubic-bezier(0.16, 1, 0.3, 1) 380ms forwards;
+  }
+  @keyframes strike {
+    to { clip-path: inset(0 0 0 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bolt--strike path { clip-path: none; animation: none; }
+  }
+</style>

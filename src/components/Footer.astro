@@ -1,0 +1,110 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/basicblend-logo.png';
+import { site, addressLines, whatsappLink } from '../data/site';
+import { services } from '../data/services';
+import Bolt from './Bolt.astro';
+
+const year = new Date().getFullYear();
+const pages = [
+  { label: 'Home', href: '/' },
+  { label: 'Services', href: '/services/' },
+  { label: 'Work', href: '/work/' },
+  { label: 'About', href: '/about/' },
+  { label: 'Contact', href: '/contact/' },
+];
+---
+
+<footer class="foot on-sunk">
+  <div class="shell shell--wide">
+    <div class="foot__top">
+      <div class="foot__brand">
+        <Image src={logo} alt={site.name} widths={[280, 560]} sizes="160px" loading="lazy" class="foot__logo" />
+        <p class="foot__tag display display--title">{site.tagline}</p>
+        <p class="meta foot__blurb">
+          Branding, websites, content and ads for businesses at every stage. Built in Chandigarh.
+        </p>
+      </div>
+
+      <div class="foot__cols">
+        <nav class="foot__col" aria-label="Site">
+          <h2 class="spec spec--sm spec--lit">Studio</h2>
+          <ul class="foot__list">
+            {pages.map((p) => <li><a href={p.href}>{p.label}</a></li>)}
+          </ul>
+        </nav>
+
+        <nav class="foot__col" aria-label="Services">
+          <h2 class="spec spec--sm spec--lit">Services</h2>
+          <ul class="foot__list">
+            {services.map((s) => <li><a href={`/services/${s.slug}/`}>{s.title}</a></li>)}
+          </ul>
+        </nav>
+
+        <section class="foot__col">
+          <h2 class="spec spec--sm spec--lit">Talk to us</h2>
+          <ul class="foot__list">
+            <li><a href={whatsappLink()} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+            <li><a href={`tel:${site.phoneIntl}`} data-nums>{site.phoneDisplay}</a></li>
+            <li><a href={`mailto:${site.email}`}>Email</a></li>
+            <li><a href={site.links.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            <li><a href={site.links.facebook} target="_blank" rel="noopener noreferrer">Facebook</a></li>
+          </ul>
+        </section>
+
+        <section class="foot__col">
+          <h2 class="spec spec--sm spec--lit">Visit</h2>
+          <address class="foot__addr">{addressLines.map((line) => <span>{line}</span>)}</address>
+          <a class="link-bolt" href={site.links.maps} target="_blank" rel="noopener noreferrer"><Bolt />Directions</a>
+        </section>
+      </div>
+    </div>
+
+    <hr class="hairline foot__rule" />
+
+    <div class="foot__base">
+      <p class="meta">&copy; {year} {site.legalName}. Chandigarh, India.</p>
+      <ul class="foot__legal">
+        <li><a href="/privacy/">Privacy policy</a></li>
+        <li><a href="/terms/">Terms &amp; conditions</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot { border-top: 1px solid var(--rule-dark); padding-block: var(--s-9) var(--s-6); }
+  .foot__top { display: grid; gap: var(--s-8); }
+  .foot__logo { width: 160px; height: auto; }
+  .foot__tag { margin-top: var(--s-5); }
+  .foot__blurb { margin-top: var(--s-3); max-width: 34ch; }
+
+  .foot__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--s-5); }
+  .foot__col h2 { margin-bottom: var(--s-4); }
+  .foot__list { display: grid; gap: var(--s-3); }
+  .foot__list a, .foot__addr {
+    font-size: var(--t-small);
+    color: var(--cream-dim);
+    text-decoration: none;
+    transition: color var(--d-fast) var(--ease);
+  }
+  .foot__list a:hover { color: var(--orange); }
+  .foot__addr { display: grid; gap: 0.15rem; font-style: normal; margin-bottom: var(--s-4); }
+
+  .foot__rule { margin-block: var(--s-8) var(--s-5); }
+  .foot__base { display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-6); align-items: center; justify-content: space-between; }
+  .foot__legal { display: flex; flex-wrap: wrap; gap: var(--s-5); }
+  .foot__legal a {
+    font-family: var(--font-spec);
+    font-size: var(--t-spec-sm);
+    letter-spacing: var(--track-spec);
+    text-transform: uppercase;
+    color: var(--cream-faint);
+    text-decoration: none;
+    transition: color var(--d-fast) var(--ease);
+  }
+  .foot__legal a:hover { color: var(--orange); }
+
+  @media (min-width: 860px) { .foot__cols { grid-template-columns: 0.8fr 1.3fr 0.9fr 1.1fr; } }
+  @media (min-width: 1180px) { .foot__top { grid-template-columns: minmax(0, 19rem) minmax(0, 1fr); gap: var(--s-10); } }
+</style>

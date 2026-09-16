@@ -1,0 +1,56 @@
+---
+import { SITE_URL } from '../data/site';
+
+/**
+ * Visible breadcrumb trail plus matching BreadcrumbList structured data.
+ * The final crumb is the current page and is not a link.
+ */
+interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  items: Crumb[];
+}
+const { items } = Astro.props;
+const trail: Crumb[] = [{ label: 'Home', href: '/' }, ...items];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: trail.map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.label,
+    ...(c.href ? { item: new URL(c.href, SITE_URL).href } : {}),
+  })),
+};
+---
+
+<nav class="crumbs" aria-label="Breadcrumb">
+  <ol>
+    {trail.map((c, i) => (
+      <li>
+        {c.href && i < trail.length - 1
+          ? <a href={c.href}>{c.label}</a>
+          : <span aria-current="page">{c.label}</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2);
+    font-size: var(--t-small);
+  }
+  .crumbs li { display: flex; align-items: center; gap: var(--s-2); color: var(--cream-faint); }
+  .crumbs li + li::before { content: '/'; color: var(--rule-dark-strong); }
+  .crumbs a { color: var(--cream-dim); text-decoration: none; transition: color var(--d-fast) var(--ease); }
+  .crumbs a:hover { color: var(--orange); }
+  .crumbs [aria-current] { color: var(--cream-dim); }
+</style>

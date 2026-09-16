@@ -1,0 +1,136 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site, SITE_URL } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Keep transient pages (post-submit confirmations, errors) out of search. */
+  noindex?: boolean;
+  /** Extra JSON-LD for this page, e.g. a Service. */
+  schema?: Record<string, unknown>;
+}
+
+const { title, description = site.description, noindex = false, schema: pageSchema } = Astro.props;
+
+// URLs are built with trailing slashes (trailingSlash: 'always'); the canonical matches.
+const canonical = new URL(Astro.url.pathname, SITE_URL).href;
+const ogImage = new URL('/og.png', SITE_URL).href;
+
+/**
+ * LocalBusiness structured data. Deliberately no aggregateRating or review —
+ * none were supplied, and marking up ratings we cannot evidence would be both
+ * fabrication and a structured-data violation.
+ */
+const business = {
+  '@context': 'https://schema.org',
+  '@type': ['ProfessionalService', 'LocalBusiness'],
+  '@id': `${SITE_URL}/#business`,
+  name: site.name,
+  legalName: site.legalName,
+  description: site.description,
+  url: `${SITE_URL}/`,
+  telephone: site.phoneIntl,
+  email: `mailto:${site.email}`,
+  image: ogImage,
+  logo: new URL('/icon.svg', SITE_URL).href,
+  slogan: site.tagline,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: `${site.address.booth}, ${site.address.market}, ${site.address.sector}`,
+    addressLocality: site.address.city,
+    postalCode: site.address.postcode,
+    addressCountry: site.address.countryCode,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
+  hasMap: site.links.maps,
+  areaServed: { '@type': 'Country', name: 'India' },
+  sameAs: [site.links.instagram, site.links.facebook],
+  knowsLanguage: ['en', 'hi'],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Marks JS as available before first paint; reveal start-states depend on it. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — ${site.tagline}`} />
+    <meta property="og:locale" content="en_IN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="preload" href="/fonts/tanker-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/supreme-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/martianmono-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+    <meta name="geo.region" content="IN-CH" />
+    <meta name="geo.placename" content="Chandigarh" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(business)} />
+    {pageSchema && <script type="application/ld+json" set:html={JSON.stringify(pageSchema)} />}
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Entrance choreography: each element animates in once, never on scroll-back.
+      const SELECTOR = '[data-reveal],[data-stamp],[data-draw],[data-wipe]';
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const activateAll = () =>
+        document.querySelectorAll(SELECTOR).forEach((el) => el.classList.add('is-in'));
+
+      if (reduced.matches || !('IntersectionObserver' in window)) {
+        activateAll();
+      } else {
+        // threshold 0, not a ratio: an element much taller than the viewport can
+        // never reach a ratio like 0.08, and would stay hidden forever.
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0 }
+        );
+        document.querySelectorAll(SELECTOR).forEach((el) => io.observe(el));
+        reduced.addEventListener('change', (e) => e.matches && activateAll());
+      }
+    </script>
+  </body>
+</html>

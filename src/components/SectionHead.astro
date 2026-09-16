@@ -1,0 +1,59 @@
+---
+import Bolt from './Bolt.astro';
+/**
+ * Section heading. The marker line (rule, bolt, one short word) is a divider,
+ * not a kicker: no sentence-length eyebrow, no numbering.
+ */
+interface Props {
+  /** One short word, e.g. "Work". No numbering. */
+  label: string;
+  title: string;
+  lead?: string;
+  id?: string;
+  align?: 'start' | 'wide';
+}
+const { label, title, lead, id, align = 'start' } = Astro.props;
+---
+
+<header class:list={['head', `head--${align}`]}>
+  <div class="head__marker">
+    <span class="head__rule" data-draw></span>
+    <Bolt size="0.7rem" />
+    <span class="head__label spec spec--sm spec--lit">{label}</span>
+  </div>
+  <h2 class="display head__title" id={id} data-stamp>{title}</h2>
+  {lead && <p class="lead head__lead" data-reveal style="--reveal-delay:120ms">{lead}</p>}
+</header>
+
+<style>
+  .head { margin-bottom: var(--s-8); }
+
+  .head__marker {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin-bottom: var(--s-5);
+  }
+  .head__rule {
+    height: 1px;
+    background: var(--rule-dark);
+    width: 3rem;
+    flex: none;
+  }
+  :global(.on-paper) .head__rule { background: var(--rule-light); }
+  .head__label { white-space: nowrap; }
+
+  .head__lead { margin-top: var(--s-5); }
+  .head--wide .head__lead { max-width: 52ch; }
+
+  @media (min-width: 1024px) {
+    .head--wide {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+      gap: var(--s-8);
+      align-items: end;
+    }
+    .head--wide .head__marker { grid-column: 1 / -1; }
+    .head--wide .head__lead { margin-top: 0; padding-bottom: 0.35em; }
+  }
+</style>

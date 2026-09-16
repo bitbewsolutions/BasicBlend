@@ -1,0 +1,125 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site, SITE_URL, addressLines } from '../data/site';
+
+/**
+ * Content follows the supplied terms-and-conditions document.
+ *
+ * Two placeholders in the source were resolved and one was deliberately not:
+ *  - "[Insert Website URL]" → SITE_URL.
+ *  - "[Insert Jurisdiction/State/Country]" → Chandigarh, India, inferred from
+ *    the registered business address.
+ *  - The late-payment clause read "a late fee of ___ per month" with the figure
+ *    missing. A percentage is NOT invented here; the clause defers to the
+ *    service agreement instead. See docs/brand-and-content-analysis.md §12.
+ */
+const host = SITE_URL.replace(/^https?:\/\//, '');
+---
+
+<Legal
+  title="Terms & conditions"
+  metaTitle={`Terms & conditions — ${site.name}`}
+  description={`The terms governing use of the ${site.name} website and our digital marketing services.`}
+  lead={`By using this website or engaging our services, you agree to the terms below. Please read them carefully.`}
+  updated="12 September 2026"
+>
+  <p>
+    Welcome to {site.legalName}. By accessing our website at
+    <a href={SITE_URL}>{host}</a> or engaging our digital marketing services, you agree
+    to comply with and be bound by the following terms and conditions.
+  </p>
+
+  <h2>1. Introduction and acceptance of terms</h2>
+  <p>
+    These terms and conditions govern your use of the {site.legalName} website and all
+    digital marketing services provided by {site.legalName} (&ldquo;we&rdquo;,
+    &ldquo;us&rdquo; or &ldquo;our&rdquo;). By accessing our platform or entering into a
+    service agreement with us, you accept these terms in full. If you disagree with any
+    part of these terms, you must not use our website or services.
+  </p>
+
+  <h2>2. Digital marketing services</h2>
+  <h3>Scope of work</h3>
+  <p>
+    {site.legalName} provides digital marketing services including, but not limited to,
+    search engine optimisation (SEO), pay-per-click (PPC) advertising, social media
+    management, content creation, email marketing and web design. The specific scope,
+    deliverables and timelines will be outlined in a separate statement of work (SOW) or
+    service agreement.
+  </p>
+  <h3>Results and performance</h3>
+  <p>
+    While we employ industry best practices to achieve optimal results, digital marketing
+    outcomes depend heavily on third-party platforms (such as Google, Meta and LinkedIn)
+    and on market dynamics. {site.legalName} therefore does not guarantee specific search
+    engine rankings, lead volumes or revenue increases.
+  </p>
+  <h3>Third-party platforms</h3>
+  <p>
+    Our strategies may involve managing accounts on third-party platforms. Clients are
+    subject to the terms of service of those respective platforms.
+  </p>
+
+  <h2>3. Intellectual property rights</h2>
+  <h3>Our content</h3>
+  <p>
+    All content on the {site.legalName} website — including text, graphics, logos, icons,
+    images, audio clips and software — is the property of {site.legalName} and protected
+    by international copyright and intellectual property laws.
+  </p>
+  <h3>Client materials</h3>
+  <p>
+    You retain ownership of all intellectual property rights in the logos, brand assets
+    and content you provide to us for use in marketing campaigns. You grant
+    {' '}{site.legalName} a non-exclusive, worldwide licence to use, reproduce and display
+    these materials solely for the purpose of executing the agreed services.
+  </p>
+  <h3>Deliverables</h3>
+  <p>
+    Upon full payment of all applicable fees, ownership of final customised deliverables
+    — such as ad creatives, custom graphics and written copy — transfers to the client,
+    excluding proprietary agency frameworks, tools or software.
+  </p>
+
+  <h2>4. Payment terms</h2>
+  <h3>Invoicing</h3>
+  <p>
+    Fees for ongoing services are billed in advance on a monthly or milestone basis, as
+    specified in your service agreement. Project-based work typically requires an upfront
+    deposit before work commences.
+  </p>
+  <h3>Late payments</h3>
+  <p>
+    Invoices unpaid past the due date may incur a late fee at the rate set out in your
+    service agreement, or the maximum allowed by law, whichever is lower.
+    {' '}{site.legalName} reserves the right to suspend services until overdue accounts are
+    settled in full.
+  </p>
+
+  <h2>5. Limitation of liability</h2>
+  <p>
+    To the maximum extent permitted by applicable law, {site.legalName} shall not be
+    liable for any indirect, incidental, special, consequential or punitive damages,
+    including loss of profits, data, use or goodwill, or other intangible losses,
+    resulting from your use of our website or services, or from any unauthorised access
+    to or alteration of your transmissions or data.
+  </p>
+
+  <h2>6. Governing law</h2>
+  <p>
+    These terms shall be governed by and construed in accordance with the laws of
+    Chandigarh, India, without regard to its conflict of law provisions. Any legal action
+    or proceeding arising under these terms shall be brought exclusively in the courts
+    located within that jurisdiction.
+  </p>
+
+  <h2>7. Contact</h2>
+  <p>For any questions or requests regarding these terms, please contact us:</p>
+  <ul>
+    <li>Email: <a href={`mailto:${site.email}`}>{site.email}</a></li>
+    <li>Phone: <a href={`tel:${site.phoneIntl}`}>{site.phoneDisplay}</a></li>
+  </ul>
+  <address>
+    {addressLines.map((line) => <span>{line}</span>)}
+  </address>
+</Legal>

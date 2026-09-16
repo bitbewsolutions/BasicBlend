@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import Bolt from './Bolt.astro';
+import { filmstrip } from '../data/work';
+
+/**
+ * A continuous marquee of real client creatives, as a contact sheet in motion.
+ * The track is duplicated once for a seamless loop; the copy is hidden from
+ * assistive tech. Spacing lives on the cells (not `gap`) so both halves are
+ * exactly equal and the loop never jumps.
+ */
+const strip = [...filmstrip, ...filmstrip];
+---
+
+<section class="strip" aria-labelledby="strip-title">
+  <div class="shell shell--wide">
+    <h2 class="strip__title meta" id="strip-title"><Bolt />Frames from recent campaigns</h2>
+  </div>
+  <div class="strip__viewport">
+    <ul class="strip__track">
+      {strip.map((cell, i) => {
+        const copy = i >= filmstrip.length;
+        return (
+          <li class="strip__cell" aria-hidden={copy ? 'true' : undefined}>
+            <Image
+              src={cell.image}
+              alt={copy ? '' : `Social media creative designed for ${cell.client}.`}
+              widths={[240, 360]}
+              sizes="220px"
+              loading="lazy"
+            />
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .strip { padding-block: var(--s-8); border-block: 1px solid var(--rule-dark); background: var(--stock-raised); }
+  .strip__title { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-6); }
+  .strip__title :global(.bolt) { width: 0.7rem; }
+
+  .strip__viewport {
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+  .strip__track { display: flex; width: max-content; animation: marquee 90s linear infinite; }
+  .strip__viewport:hover .strip__track,
+  .strip__viewport:focus-within .strip__track { animation-play-state: paused; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  .strip__cell { flex: none; height: 12rem; margin-inline-end: var(--s-3); }
+  .strip__cell :global(img) { height: 100%; width: auto; object-fit: cover; border: 1px solid var(--rule-dark); }
+  @media (min-width: 760px) { .strip__cell { height: 15rem; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .strip__track { animation: none; }
+    .strip__viewport { overflow-x: auto; mask-image: none; }
+  }
+</style>

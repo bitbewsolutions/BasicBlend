@@ -1,0 +1,126 @@
+---
+import { services } from '../data/services';
+import { whatsappLink } from '../data/site';
+
+/**
+ * Enquiry form. Posts to Netlify Forms (the deploy target; no backend was
+ * specified) with a honeypot for spam. `service` preselects the "what do you
+ * need" field when arriving from a service page (?service=slug).
+ */
+---
+
+<form
+  class="cf plate plate--inset"
+  name="enquiry"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  action="/thanks/"
+>
+  <input type="hidden" name="form-name" value="enquiry" />
+  <p class="cf__hp" hidden>
+    <label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+  </p>
+
+  <div class="cf__pair">
+    <div class="cf__field">
+      <label for="cf-name" class="spec spec--sm">Your name</label>
+      <input id="cf-name" name="name" type="text" required autocomplete="name" />
+    </div>
+    <div class="cf__field">
+      <label for="cf-business" class="spec spec--sm">Business name</label>
+      <input id="cf-business" name="business" type="text" autocomplete="organization" />
+    </div>
+  </div>
+
+  <div class="cf__pair">
+    <div class="cf__field">
+      <label for="cf-phone" class="spec spec--sm">Phone / WhatsApp</label>
+      <input id="cf-phone" name="phone" type="tel" required inputmode="tel" autocomplete="tel" />
+    </div>
+    <div class="cf__field">
+      <label for="cf-email" class="spec spec--sm">Email</label>
+      <input id="cf-email" name="email" type="email" autocomplete="email" />
+    </div>
+  </div>
+
+  <div class="cf__field">
+    <label for="cf-need" class="spec spec--sm">What do you need?</label>
+    <select id="cf-need" name="need" data-need>
+      <option value="">Not sure yet</option>
+      {services.map((s) => <option value={s.slug}>{s.title}</option>)}
+      <option value="several">A mix of these</option>
+    </select>
+  </div>
+
+  <div class="cf__field">
+    <label for="cf-msg" class="spec spec--sm">About your project</label>
+    <textarea id="cf-msg" name="message" rows="5" required aria-describedby="cf-msg-hint"></textarea>
+    <p class="meta" id="cf-msg-hint">What your business does, what you want to achieve, and any timing.</p>
+  </div>
+
+  <button class="btn cf__submit" type="submit">
+    Send enquiry <span class="btn__arrow" aria-hidden="true">&rarr;</span>
+  </button>
+
+  <p class="meta cf__alt">
+    Prefer to message?
+    <a href={whatsappLink()} target="_blank" rel="noopener noreferrer">Open WhatsApp instead</a>
+  </p>
+</form>
+
+<style>
+  .cf { display: grid; gap: var(--s-5); padding: var(--s-5); }
+  .cf__hp { position: absolute; left: -9999px; }
+  .cf__field { display: grid; gap: var(--s-2); }
+  .cf__pair { display: grid; gap: var(--s-5); align-items: end; }
+
+  .cf input, .cf textarea, .cf select {
+    width: 100%;
+    padding: 0.8rem 0.9rem;
+    background: var(--stock);
+    color: var(--cream);
+    border: 1px solid var(--rule-dark-strong);
+    border-radius: 0;
+    font-size: var(--t-body);
+    transition: border-color var(--d-fast) var(--ease), background var(--d-fast) var(--ease);
+  }
+  .cf textarea { resize: vertical; min-height: 7rem; line-height: 1.6; }
+  .cf select {
+    appearance: none;
+    cursor: pointer;
+    padding-inline-end: 2.5rem;
+    background-image: linear-gradient(45deg, transparent 50%, var(--orange) 50%),
+                      linear-gradient(135deg, var(--orange) 50%, transparent 50%);
+    background-position: calc(100% - 1.15rem) 1.15rem, calc(100% - 0.85rem) 1.15rem;
+    background-size: 0.3rem 0.3rem;
+    background-repeat: no-repeat;
+  }
+  .cf input:focus, .cf textarea:focus, .cf select:focus {
+    outline: none;
+    border-color: var(--orange);
+    background-color: color-mix(in srgb, var(--orange) 6%, var(--stock));
+  }
+  .cf input:focus-visible, .cf textarea:focus-visible, .cf select:focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 2px;
+  }
+  .cf input:user-invalid, .cf textarea:user-invalid { border-color: #e08a8a; }
+
+  .cf__submit { justify-self: start; margin-top: var(--s-2); }
+  .cf__alt a { color: var(--orange); text-decoration: underline; text-underline-offset: 0.2em; }
+
+  @media (min-width: 560px) {
+    .cf { padding: var(--s-7); }
+    .cf__pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
+
+<script>
+  // Arriving from a service page (?service=slug) preselects that service.
+  const select = document.querySelector<HTMLSelectElement>('[data-need]');
+  const wanted = new URLSearchParams(location.search).get('service');
+  if (select && wanted && [...select.options].some((o) => o.value === wanted)) {
+    select.value = wanted;
+  }
+</script>

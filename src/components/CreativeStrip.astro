@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+/**
+ * Individual creatives from a case, in a horizontally scrolling strip.
+ * The sources are small (roughly 240–340px), so they are shown at about native
+ * size rather than enlarged into a blurry grid. Keyboard users can focus the
+ * strip and scroll it with the arrow keys.
+ */
+interface Props {
+  images: ImageMetadata[];
+  client: string;
+}
+const { images, client } = Astro.props;
+---
+
+<div class="cs" role="region" aria-label={`Creatives designed for ${client}`} tabindex="0">
+  <ul class="cs__track">
+    {images.map((img, i) => (
+      <li class="cs__cell">
+        <Image
+          src={img}
+          alt={`Social media creative ${i + 1} designed for ${client}.`}
+          widths={[img.width]}
+          sizes={`${img.width}px`}
+          loading="lazy"
+        />
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .cs {
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    padding-bottom: var(--s-4);
+    scrollbar-width: thin;
+  }
+  .cs:focus-visible { outline-offset: -2px; }
+  .cs__track { display: flex; gap: var(--s-3); width: max-content; }
+  .cs__cell { flex: none; height: min(18rem, 60vw); scroll-snap-align: start; }
+  .cs__cell :global(img) { height: 100%; width: auto; border: 1px solid var(--rule-dark); }
+</style>

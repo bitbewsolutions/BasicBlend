@@ -1,0 +1,93 @@
+---
+import Base from './Base.astro';
+import PageHero from '../components/PageHero.astro';
+
+interface Props {
+  title: string;
+  metaTitle: string;
+  description: string;
+  lead?: string;
+  updated: string;
+}
+const { title, metaTitle, description, lead, updated } = Astro.props;
+---
+
+<Base title={metaTitle} description={description}>
+  <PageHero title={title} lead={lead} crumbs={[{ label: title }]} />
+
+  <article class="legal section--tight section">
+    <div class="shell shell--text">
+      <p class="legal__updated meta">Last updated {updated}</p>
+      <slot />
+    </div>
+  </article>
+</Base>
+
+<style is:global>
+  .legal__updated {
+    padding-bottom: var(--s-6);
+    margin-bottom: var(--s-7);
+    border-bottom: 1px solid var(--rule-dark);
+  }
+
+  .legal h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 3.4vw, 1.9rem);
+    text-transform: uppercase;
+    letter-spacing: var(--track-display);
+    line-height: 1.15;
+    margin-top: var(--s-8);
+    margin-bottom: var(--s-4);
+  }
+
+  .legal h3 {
+    font-size: var(--t-body-lg);
+    font-weight: 700;
+    margin-top: var(--s-6);
+    margin-bottom: var(--s-2);
+    color: var(--cream);
+  }
+
+  .legal p,
+  .legal li { color: var(--cream-dim); }
+  .legal p + p { margin-top: var(--s-4); }
+
+  .legal ul {
+    display: grid;
+    gap: var(--s-3);
+    margin-top: var(--s-4);
+    padding-inline-start: 0;
+  }
+  .legal ul li {
+    position: relative;
+    padding-inline-start: var(--s-5);
+  }
+  /* The bolt rendered as a marker, so lists carry the signature too. */
+  .legal ul li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.62em;
+    width: 0.45rem;
+    height: 0.7rem;
+    background: var(--orange);
+    clip-path: polygon(62% 0, 8% 56%, 42% 56%, 28% 100%, 92% 42%, 55% 42%);
+  }
+
+  .legal a {
+    color: var(--orange);
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+  }
+  .legal a:hover { color: var(--orange-hot); }
+
+  .legal strong { color: var(--cream); font-weight: 700; }
+
+  .legal address {
+    font-style: normal;
+    display: grid;
+    gap: 0.15rem;
+    margin-top: var(--s-3);
+    color: var(--cream-dim);
+  }
+</style>

@@ -1,0 +1,133 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { site, SITE_URL, addressLines } from '../data/site';
+
+/**
+ * Content follows the supplied privacy-policy document. The only edit is
+ * resolving "[Insert Website URL]" to SITE_URL, plus a cookies note that
+ * matches what this site actually does (it sets no analytics cookies today).
+ */
+const host = SITE_URL.replace(/^https?:\/\//, '');
+---
+
+<Legal
+  title="Privacy policy"
+  metaTitle={`Privacy policy — ${site.name}`}
+  description={`How ${site.name} collects, uses and safeguards your personal information.`}
+  lead="How we collect, use, disclose and safeguard your data when you visit this site or engage our services."
+  updated="12 September 2026"
+>
+  <p>
+    {site.legalName} respects your privacy and is committed to protecting your personal
+    information. This policy outlines how we handle your data when you visit
+    <a href={SITE_URL}>{host}</a> or engage with our services.
+  </p>
+
+  <h2>1. Information we collect</h2>
+  <h3>Personal data</h3>
+  <p>
+    When you fill out a contact form, request a consultation or subscribe to our
+    newsletter, we may collect personally identifiable information including your full
+    name, email address, phone number, company name and website URL.
+  </p>
+  <h3>Technical and usage data</h3>
+  <p>
+    When you navigate our website, our servers may automatically collect information such
+    as your IP address, browser type, operating system, referring URLs, page views, and
+    the dates and times of your visits.
+  </p>
+  <h3>Marketing and campaign data</h3>
+  <p>
+    Information required to execute digital marketing campaigns on your behalf, which may
+    include audience analytics, customer lists and advertising performance metrics.
+  </p>
+
+  <h2>2. How we use your information</h2>
+  <ul>
+    <li>To provide, operate and maintain our digital marketing services and website.</li>
+    <li>
+      To communicate with you about project updates, campaign performance, invoices and
+      support.
+    </li>
+    <li>
+      To send marketing communications, newsletters and promotional offers — you can opt
+      out at any time.
+    </li>
+    <li>
+      To analyse website traffic and user behaviour so we can improve the site and our
+      services.
+    </li>
+    <li>To comply with legal obligations and enforce our terms and service agreements.</li>
+  </ul>
+
+  <h2>3. Disclosure of your information</h2>
+  <p>
+    <strong>We do not sell, trade or rent your personal information to third parties.</strong>
+    {' '}We may share your data with:
+  </p>
+  <ul>
+    <li>
+      <strong>Service providers.</strong> Trusted third-party vendors, hosting providers
+      and analytics partners who help us operate our business and website, subject to
+      strict confidentiality obligations.
+    </li>
+    <li>
+      <strong>Legal requirements.</strong> Law enforcement agencies, regulatory bodies or
+      authorised third parties where required by law, or to protect the rights, property
+      or safety of {site.legalName}, our clients or others.
+    </li>
+  </ul>
+
+  <h2>4. Data security</h2>
+  <p>
+    We implement appropriate technical, administrative and physical security measures
+    designed to protect your personal information from unauthorised access, alteration,
+    disclosure or destruction. However, no electronic transmission over the internet or
+    information storage system can be guaranteed to be completely secure.
+  </p>
+
+  <h2>5. Your data protection rights</h2>
+  <p>Depending on your location, you may have the following rights over your data:</p>
+  <ul>
+    <li><strong>Access</strong> — request copies of the personal data we hold about you.</li>
+    <li>
+      <strong>Rectification</strong> — request correction of inaccurate or incomplete
+      information.
+    </li>
+    <li>
+      <strong>Erasure</strong> — request deletion of your personal data, under certain
+      conditions.
+    </li>
+    <li>
+      <strong>Object or restrict</strong> — object to or restrict processing of your data
+      for marketing or other purposes.
+    </li>
+  </ul>
+  <p>
+    To exercise any of these rights, email us at
+    <a href={`mailto:${site.email}`}>{site.email}</a>.
+  </p>
+
+  <h2>6. Cookies and tracking</h2>
+  <p>
+    This website does not currently set analytics or advertising cookies of its own. Where
+    cookies, web beacons or similar technologies are used in future to enhance your
+    browsing experience, analyse traffic or personalise content, you will be able to
+    configure your browser to refuse them — though some features may then not function
+    properly.
+  </p>
+  <p>
+    Our contact form is processed by our hosting provider, which may log technical request
+    data in order to deliver the form submission and filter spam.
+  </p>
+
+  <h2>7. Contact</h2>
+  <p>For any questions or requests regarding this policy, please contact us:</p>
+  <ul>
+    <li>Email: <a href={`mailto:${site.email}`}>{site.email}</a></li>
+    <li>Phone: <a href={`tel:${site.phoneIntl}`}>{site.phoneDisplay}</a></li>
+  </ul>
+  <address>
+    {addressLines.map((line) => <span>{line}</span>)}
+  </address>
+</Legal>

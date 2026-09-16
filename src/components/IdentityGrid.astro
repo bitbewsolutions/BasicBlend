@@ -1,0 +1,35 @@
+---
+import { Image } from 'astro:assets';
+import { identities } from '../data/work';
+
+/**
+ * Logos BasicBlend designed. Presented as delivered work — never as a
+ * "trusted by" wall, which would misrepresent a deliverable as an endorsement.
+ */
+---
+
+<ul class="ident">
+  {identities.map((id, i) => (
+    <li data-reveal style={`--reveal-delay:${i * 90}ms`}>
+      <figure class="ident__fig plate plate--inset">
+        <Image
+          src={id.image}
+          alt={id.alt}
+          widths={[320, 520]}
+          sizes="(min-width: 760px) 22rem, 84vw"
+          loading="lazy"
+          class="ident__img"
+        />
+      </figure>
+      <h3 class="ident__client">{id.client}</h3>
+      <p class="meta">{id.sector}</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .ident { display: grid; gap: var(--s-7); grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); }
+  .ident__fig { margin: 0 0 var(--s-4); padding: var(--s-4); }
+  .ident__img { width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; }
+  .ident__client { font-size: var(--t-body-lg); font-weight: 500; margin-bottom: var(--s-1); }
+</style>

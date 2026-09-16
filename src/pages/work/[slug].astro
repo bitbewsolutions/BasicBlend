@@ -1,0 +1,158 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import SpecPlate from '../../components/SpecPlate.astro';
+import CreativeStrip from '../../components/CreativeStrip.astro';
+import FilmRow from '../../components/FilmRow.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Bolt from '../../components/Bolt.astro';
+import { caseStudies, type CaseStudy } from '../../data/work';
+import { serviceBySlug } from '../../data/services';
+
+export function getStaticPaths() {
+  return caseStudies.map((study, i) => ({
+    params: { slug: study.slug },
+    props: { study, next: caseStudies[(i + 1) % caseStudies.length] },
+  }));
+}
+
+interface Props {
+  study: CaseStudy;
+  next: CaseStudy;
+}
+const { study, next } = Astro.props;
+const related = study.services.map(serviceBySlug).filter(Boolean);
+---
+
+<Base title={`${study.client} — Case study | BasicBlend`} description={study.teaser + ' ' + study.overview}>
+  <PageHero
+    title={study.client}
+    lead={study.overview}
+    crumbs={[{ label: 'Work', href: '/work/' }, { label: study.client }]}
+  >
+    <div class="case-spec"><SpecPlate rows={study.spec} /></div>
+  </PageHero>
+
+  <section class="section case-cover" aria-label="The campaign">
+    <div class="shell">
+      <figure class="case-cover__fig plate" data-wipe>
+        <div>
+          <Image
+            src={study.cover}
+            alt={study.coverAlt}
+            widths={[640, 1024]}
+            sizes="(min-width: 1100px) 64rem, 92vw"
+            loading="eager"
+            class="case-cover__img"
+          />
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="scope-title">
+    <div class="shell case-scope">
+      <h2 class="display display--title" id="scope-title" data-stamp>What we did</h2>
+      <div>
+        <ul class="bolt-list case-scope__list">
+          {study.scope.map((s, i) => <li data-reveal style={`--reveal-delay:${i * 50}ms`}><Bolt />{s}</li>)}
+        </ul>
+        {related.length > 0 && (
+          <div class="case-scope__services">
+            <h3 class="spec spec--sm spec--lit">Services used</h3>
+            <ul class="case-scope__svc-list">
+              {related.map((svc) => (
+                <li><a class="link-bolt" href={`/services/${svc!.slug}/`}><Bolt />{svc!.title}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="section on-plum" aria-labelledby="creatives-title">
+    <div class="shell">
+      <SectionHead
+        label="Creatives"
+        id="creatives-title"
+        title="Up close"
+        lead="Individual posts from the campaign. Scroll sideways to see more."
+        align="wide"
+      />
+      <CreativeStrip images={study.gallery} client={study.client} />
+    </div>
+  </section>
+
+  {study.feature && (
+    <section class="section" aria-labelledby="feature-title">
+      <div class="shell case-feature">
+        <div>
+          <SectionHead label="Presentation" id="feature-title" title="Campaign layout" />
+          <p class="meta">{study.feature.caption}</p>
+        </div>
+        <figure class="case-feature__fig plate" data-wipe>
+          <div>
+            <Image src={study.feature.image} alt={study.feature.alt} widths={[480, 800, 1024]} sizes="(min-width: 1024px) 34rem, 92vw" loading="lazy" />
+          </div>
+        </figure>
+      </div>
+    </section>
+  )}
+
+  {study.films && (
+    <section class="section" aria-labelledby="films-title">
+      <div class="shell">
+        <SectionHead label="Films" id="films-title" title="Product films" align="wide" />
+        <FilmRow films={study.films} />
+      </div>
+    </section>
+  )}
+
+  <section class="section section--tight next" aria-label="Next case study">
+    <div class="shell">
+      <a class="next__link" href={`/work/${next.slug}/`}>
+        <span class="spec spec--sm spec--lit">Next case</span>
+        <span class="next__row">
+          <span class="display display--title next__client">{next.client}</span>
+          <span class="next__arrow" aria-hidden="true">&rarr;</span>
+        </span>
+        <span class="meta">{next.teaser}</span>
+      </a>
+    </div>
+  </section>
+
+  <CtaBand title="Want work like this?" message={`Hi BasicBlend — I saw the ${study.client} work on your site.`} />
+</Base>
+
+<style>
+  .case-spec { max-width: 30rem; }
+  .case-cover { padding-block-end: 0; }
+  .case-cover__fig { margin: 0 auto; padding: var(--s-2); max-width: 64rem; }
+  .case-cover__img { width: 100%; height: auto; }
+
+  .case-scope { display: grid; gap: var(--s-6); }
+  .case-scope__list { font-size: var(--t-body-lg); }
+  .case-scope__services { margin-top: var(--s-6); }
+  .case-scope__svc-list { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6); margin-top: var(--s-3); }
+
+  .case-feature { display: grid; gap: var(--s-7); align-items: center; }
+  .case-feature__fig { margin: 0; padding: var(--s-2); }
+  .case-feature__fig :global(img) { width: 100%; height: auto; }
+
+  .next { border-top: 1px solid var(--rule-dark); }
+  .next__link { display: grid; gap: var(--s-3); text-decoration: none; color: inherit; }
+  .next__row { display: flex; align-items: center; justify-content: space-between; gap: var(--s-5); }
+  .next__client { font-size: var(--t-display); transition: color var(--d-fast) var(--ease); }
+  .next__arrow { font-size: clamp(2rem, 5vw, 3.5rem); color: var(--orange); transition: transform var(--d-mid) var(--ease); }
+  .next__link:hover .next__client { color: var(--orange); }
+  .next__link:hover .next__arrow { transform: translateX(10px); }
+
+  @media (min-width: 900px) {
+    .case-scope { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: var(--s-9); }
+    .case-scope__list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-6); }
+    .case-feature { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: var(--s-9); }
+  }
+</style>

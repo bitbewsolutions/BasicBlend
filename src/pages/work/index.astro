@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import CasePlate from '../../components/CasePlate.astro';
+import IdentityGrid from '../../components/IdentityGrid.astro';
+import FilmRow from '../../components/FilmRow.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { caseStudies, films } from '../../data/work';
+---
+
+<Base
+  title="Work — Selected Campaigns, Films & Brand Identities | BasicBlend"
+  description="Selected work from BasicBlend: social campaigns, product films and brand identities for businesses in Chandigarh and beyond."
+>
+  <PageHero
+    title="Selected work"
+    lead="A curated selection of recent projects: campaigns, product films and identities. Every piece shown here was designed, written or produced by our team."
+    crumbs={[{ label: 'Work' }]}
+  />
+
+  <section class="section" aria-label="Case studies">
+    <div class="shell work-cases">
+      {caseStudies.map((study, i) => <CasePlate study={study} flip={i % 2 === 1} />)}
+    </div>
+  </section>
+
+  <section class="section on-plum" aria-labelledby="films-title">
+    <div class="shell">
+      <SectionHead
+        label="Production"
+        id="films-title"
+        title="Films and shoots"
+        lead="We script, shoot and edit in-house, on factory floors, on production lines and in real kitchens."
+        align="wide"
+      />
+      <FilmRow films={[films.bts, films.blender, films.line]} />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="identity-title">
+    <div class="shell">
+      <SectionHead
+        label="Identity"
+        id="identity-title"
+        title="Logos and identities"
+        lead="Marks designed for retail, trade and wholesale businesses, and everything they have to be printed on."
+        align="wide"
+      />
+      <IdentityGrid />
+    </div>
+  </section>
+
+  <CtaBand title="Let's build yours" />
+</Base>
+
+<style>
+  .work-cases { display: grid; gap: var(--section-y); }
+</style>

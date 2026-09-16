@@ -1,0 +1,361 @@
+---
+import { Image } from 'astro:assets';
+import Bolt from '../Bolt.astro';
+import { showpiece } from '../../data/work';
+
+/**
+ * THE SHOWPIECE — "The Blend".
+ *
+ * Literalises the brand name: before the blend (our own raw production footage)
+ * on one side of the wipe, after the blend (a campaign we delivered) on the other.
+ *
+ * Control model:
+ *  - Desktop: the stage sticks and scroll position drives the wipe.
+ *  - Any device: a real range input drives it too, so it is keyboard operable.
+ *    The moment a visitor touches the slider, scroll-driving yields to them.
+ *  - Reduced motion: no scroll-driving, no video autoplay; the slider still works.
+ *
+ * The stage is 4:5 — the campaign still's native ratio — so nothing is upscaled
+ * beyond ~1.4x and the delivered creative stays pin-sharp.
+ */
+---
+
+<section class="blend" id="blend" data-blend-section aria-labelledby="blend-title">
+  <div class="blend__stage-wrap">
+    <div class="shell shell--wide blend__grid">
+      <!-- One real heading names the section; the two words below are the
+           tagline split across the wipe, not headings of their own. -->
+      <h2 class="vh" id="blend-title">From raw footage to a delivered campaign</h2>
+
+      <!-- RAW column -->
+      <div class="blend__side blend__side--raw">
+        <p class="blend__label spec spec--sm">
+          <span class="blend__dot" aria-hidden="true"></span>Raw
+        </p>
+        <p class="display blend__word">Before<br />the blend</p>
+        <ul class="blend__notes">
+          <li>Your product, your space, our camera</li>
+          <li>Unedited footage, no direction yet</li>
+          <li>Raw material, nothing shaped</li>
+        </ul>
+      </div>
+
+      <!-- THE STAGE -->
+      <figure class="blend__stage plate plate--inset" data-stage>
+        <div class="blend__layers">
+          <video
+            class="blend__raw"
+            src="/media/bts-production.mp4"
+            poster="/media/bts-production.jpg"
+            width="352"
+            height="624"
+            muted
+            loop
+            playsinline
+            preload="none"
+            aria-label="Behind-the-scenes footage from a BasicBlend shoot: scripting, a factory floor, and an ad shoot in a kitchen."
+          ></video>
+
+          <Image
+            class="blend__delivered"
+            src={showpiece.delivered}
+            alt={showpiece.deliveredAlt}
+            widths={[480, 720, 1024]}
+            sizes="(min-width: 1024px) 30rem, 80vw"
+            loading="lazy"
+          />
+
+          <span class="blend__divider" aria-hidden="true">
+            <span class="blend__badge"><Bolt size="0.7rem" /></span>
+          </span>
+        </div>
+
+        <label class="blend__control">
+          <span class="vh">Blend between the raw footage and the delivered campaign</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="50"
+            step="1"
+            data-blend-input
+            aria-describedby="blend-hint"
+          />
+        </label>
+
+        <figcaption class="blend__cap">
+          <span class="spec spec--sm spec--orange" data-state-label>Drag, or keep scrolling</span>
+          <span class="meta" id="blend-hint">
+            Our own footage &rarr; the campaign we delivered
+          </span>
+        </figcaption>
+      </figure>
+
+      <!-- DELIVERED column -->
+      <div class="blend__side blend__side--delivered">
+        <p class="blend__label spec spec--sm">
+          <span class="blend__dot" aria-hidden="true"></span>Delivered
+        </p>
+        <p class="display blend__word">After<br />the blend</p>
+        <ul class="blend__notes">
+          <li>Shot and edited by our team</li>
+          <li>One look, one voice</li>
+          <li>Written for the people buying</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .blend {
+    background: var(--plum);
+    border-block: 1px solid var(--rule-dark);
+    position: relative;
+  }
+
+  .blend__stage-wrap { padding-block: var(--section-y); }
+
+  .blend__grid {
+    display: grid;
+    gap: var(--s-7);
+    justify-items: center;
+  }
+
+  /* --- Side columns --- */
+  .blend__side { width: 100%; max-width: 26rem; }
+  .blend__label {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin-bottom: var(--s-4);
+    transition: color var(--d-mid) var(--ease), opacity var(--d-mid) var(--ease);
+  }
+  .blend__dot {
+    width: 7px;
+    height: 7px;
+    background: currentColor;
+    flex: none;
+  }
+  .blend__word {
+    font-size: clamp(2.25rem, 8vw, 4.25rem);
+    margin-bottom: var(--s-5);
+  }
+  .blend__notes { display: grid; gap: var(--s-3); }
+  .blend__notes li {
+    font-size: var(--t-small);
+    line-height: 1.5;
+    color: var(--cream-dim);
+  }
+
+  /* Emphasis follows the wipe. Only the large display word dims — the state
+     labels and notes stay at full strength, because dimming 11px letterspaced
+     caps or small body text drops them below AA contrast. */
+  .blend__side--raw { --weight: calc(1 - var(--blend, 0.5)); }
+  .blend__side--delivered { --weight: var(--blend, 0.5); }
+  .blend__side .blend__word { color: var(--cream); }
+  .blend__side .blend__label { color: var(--cream); }
+  .blend__word { transition: opacity var(--d-mid) var(--ease); }
+  /* Dimming only means something when the two sides sit side by side. */
+  @media (min-width: 1024px) {
+    .blend__word { opacity: calc(0.64 + (var(--weight) * 0.36)); }
+  }
+  .blend__side--delivered .blend__label { color: var(--orange); }
+
+  /* --- The stage --- */
+  .blend__stage {
+    width: min(30rem, 86vw);
+    padding: var(--s-3);
+    background: var(--stock);
+    margin: 0;
+  }
+
+  .blend__layers {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--stock-raised);
+  }
+
+  .blend__raw,
+  .blend__delivered {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Bias the portrait footage up so the machinery, not the floor, is in frame. */
+  .blend__raw { object-position: center 32%; }
+
+  .blend__delivered {
+    clip-path: inset(0 calc((1 - var(--blend, 0.5)) * 100%) 0 0);
+  }
+
+  .blend__divider {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--blend, 0.5) * 100%);
+    width: 2px;
+    background: var(--orange);
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+  .blend__badge {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.9rem;
+    background: var(--stock);
+    border: 1px solid var(--orange);
+  }
+
+  /* --- The control. A real range input, restyled as the handle track. --- */
+  .blend__control { display: block; margin-top: var(--s-4); }
+  .blend__control input {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 1.75rem;
+    background: transparent;
+    cursor: ew-resize;
+  }
+  .blend__control input::-webkit-slider-runnable-track {
+    height: 1px;
+    background: var(--rule-dark-strong);
+  }
+  .blend__control input::-moz-range-track {
+    height: 1px;
+    background: var(--rule-dark-strong);
+  }
+  .blend__control input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 2.25rem;
+    height: 1.25rem;
+    margin-top: -0.625rem;
+    background: var(--orange);
+    border: 0;
+    clip-path: polygon(0 0, calc(100% - 0.3rem) 0, 100% 0.3rem, 100% 100%, 0 100%);
+  }
+  .blend__control input::-moz-range-thumb {
+    width: 2.25rem;
+    height: 1.25rem;
+    background: var(--orange);
+    border: 0;
+    border-radius: 0;
+  }
+  .blend__control input:focus-visible { outline-offset: 6px; }
+
+  .blend__cap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-2) var(--s-4);
+    margin-top: var(--s-2);
+  }
+
+  /* --- Desktop: three columns, stage sticks while the wipe scrubs. --- */
+  @media (min-width: 1024px) {
+    .blend { height: 200vh; }
+    .blend__stage-wrap {
+      position: sticky;
+      top: var(--nav-h);
+      height: calc(100vh - var(--nav-h));
+      display: grid;
+      align-content: center;
+      padding-block: var(--s-6);
+    }
+    .blend__grid {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: center;
+      gap: var(--s-8);
+    }
+    .blend__side--raw { justify-self: end; text-align: right; }
+    .blend__side--raw .blend__label { flex-direction: row-reverse; }
+    .blend__side--raw .blend__notes { justify-items: end; }
+    .blend__stage { width: 30rem; }
+  }
+
+  /* Short desktop viewports: keep the stage inside the fold. */
+  @media (min-width: 1024px) and (max-height: 780px) {
+    .blend__stage { width: 23rem; }
+    .blend__word { font-size: 3rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blend { height: auto; }
+    .blend__stage-wrap { position: static; height: auto; }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-blend-section]');
+  const input = document.querySelector<HTMLInputElement>('[data-blend-input]');
+  const stateLabel = document.querySelector<HTMLElement>('[data-state-label]');
+  const video = document.querySelector<HTMLVideoElement>('.blend__raw');
+
+  if (section && input) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const wide = window.matchMedia('(min-width: 1024px)');
+    let userDriven = false;
+
+    const setBlend = (v: number) => {
+      const clamped = Math.min(1, Math.max(0, v));
+      section.style.setProperty('--blend', clamped.toFixed(4));
+      if (stateLabel) {
+        stateLabel.textContent =
+          clamped < 0.12 ? 'Raw footage' : clamped > 0.88 ? 'Delivered campaign' : 'Blending';
+      }
+    };
+
+    // The slider is the source of truth once a visitor touches it.
+    input.addEventListener('input', () => {
+      userDriven = true;
+      setBlend(Number(input.value) / 100);
+    });
+
+    const onScroll = () => {
+      if (userDriven || !wide.matches || reduced.matches) return;
+      const r = section.getBoundingClientRect();
+      const travel = r.height - window.innerHeight;
+      if (travel <= 0) return;
+      // Ease the ends so the wipe settles rather than slamming into 0 / 1.
+      const raw = Math.min(1, Math.max(0, -r.top / travel));
+      const p = Math.min(1, Math.max(0, (raw - 0.12) / 0.72));
+      setBlend(p);
+      input.value = String(Math.round(p * 100));
+    };
+
+    let queued = false;
+    addEventListener(
+      'scroll',
+      () => {
+        if (!queued) {
+          queued = true;
+          requestAnimationFrame(() => { onScroll(); queued = false; });
+        }
+      },
+      { passive: true }
+    );
+    wide.addEventListener('change', onScroll);
+
+    setBlend(0.5);
+    onScroll();
+
+    // Play the footage only while the stage is on screen.
+    if (video && !reduced.matches) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) video.play().catch(() => {});
+            else video.pause();
+          }
+        },
+        { threshold: 0.2 }
+      );
+      io.observe(video);
+    }
+  }
+</script>

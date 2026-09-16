@@ -1,0 +1,124 @@
+/* =========================================================================
+   BasicBlend — design tokens
+   The only place colour, type, space, rule and easing values are defined.
+   Components must not hard-code any of these.
+
+   Brand colours per the client: black, purple, orange.
+   - Black and cream are sampled from logo.PNG (#000000 / #F1EBE0).
+   - Purple is sampled from the catalogue's purple blocks (#A26AC4) and
+     cover ground (#1E1623).
+   - Orange is sampled from the catalogue's "B" mark (#D3721E), lifted slightly
+     for screen so it holds 7:1 on black.
+   Every text pairing below was contrast-checked; see docs/website-architecture.md.
+   ========================================================================= */
+
+:root {
+  /* ---- Grounds ------------------------------------------------------- */
+  --stock: #000000;          /* primary ground */
+  --stock-raised: #0d0a10;   /* raised panel on black */
+  --stock-sunk: #070509;     /* footer */
+  --plum: #1e1623;           /* dark purple ground — catalogue cover */
+  --plum-raised: #2a1f31;    /* panel on plum */
+  --paper: #f1ebe0;          /* cream ground */
+  --paper-warm: #e9e1d4;
+
+  /* ---- Ink ----------------------------------------------------------- */
+  --cream: #f1ebe0;          /* primary ink on dark */
+  --cream-dim: #b9b0a5;      /* secondary on dark — 8.2:1 on plum */
+  --cream-faint: #8d857c;    /* tertiary on dark — 4.8:1 on plum */
+  --ink: #100c12;            /* primary ink on paper / on purple */
+  --ink-dim: #4a424e;        /* secondary on paper */
+  --ink-faint: #6d6472;      /* tertiary on paper */
+
+  /* ---- Orange: action and energy ------------------------------------
+     Buttons, the bolt, links, focus, progress. */
+  --orange: #eb7a2e;         /* 7.4:1 on black; black text on it 7.4:1 */
+  --orange-hot: #f59048;     /* hover */
+  --orange-ink: #9a4a0e;     /* orange text on paper — 5.3:1 */
+
+  /* ---- Purple: identity and SURFACE ---------------------------------
+     Blocks, grounds, slabs, rules. Not used for small text on dark: light
+     violet type on black is a stock generated-site look. Never cream on it (3.3:1). */
+  --purple: #a26ac4;         /* blocks and surfaces; ink text on it 5.0:1 */
+  --purple-ink: #6b3f8f;     /* purple text on paper — 6.5:1 */
+
+  /* ---- Rules --------------------------------------------------------- */
+  --rule-dark: rgba(241, 235, 224, 0.16);
+  --rule-dark-strong: rgba(241, 235, 224, 0.34);
+  --rule-light: rgba(16, 12, 18, 0.16);
+  --rule-light-strong: rgba(16, 12, 18, 0.32);
+  --rule-purple: rgba(162, 106, 196, 0.55);
+
+  /* ---- Type families ------------------------------------------------- */
+  --font-display: 'Tanker', 'Arial Black', 'Helvetica Neue', sans-serif;
+  --font-body: 'Supreme', ui-sans-serif, system-ui, 'Segoe UI', Arial, sans-serif;
+  --font-spec: 'Martian Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+
+  /* ---- Fluid type scale ---------------------------------------------- */
+  --t-mega: clamp(2.8rem, 13.5vw, 5.75rem);      /* home hero, single column */
+  --t-mega-wide: clamp(5rem, 8vw, 9rem);         /* home hero beside the film, >=1024px */
+  --t-hero: clamp(2.4rem, 7.2vw, 5.25rem);       /* inner page heroes */
+  --t-display: clamp(2.15rem, 6.2vw, 4.5rem);    /* section headlines */
+  --t-title: clamp(1.55rem, 3.6vw, 2.4rem);      /* sub-headlines */
+  --t-lead: clamp(1.0625rem, 1.5vw, 1.3125rem);
+  --t-body: 1rem;
+  --t-body-lg: 1.0625rem;
+  --t-small: 0.9375rem;
+  --t-spec: 0.75rem;
+  --t-spec-sm: 0.6875rem;
+
+  --lh-display: 0.92;
+  --lh-title: 1.06;
+  --lh-body: 1.65;
+
+  --track-display: -0.015em;
+  --track-spec: 0.16em;
+  --track-spec-wide: 0.22em;
+
+  /* ---- Space scale --------------------------------------------------- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 2.75rem;
+  --s-8: 3.5rem;
+  --s-9: 5rem;
+  --s-10: 7rem;
+
+  --section-y: clamp(4.5rem, 9vw, 8.5rem);
+  --section-y-tight: clamp(3rem, 6vw, 5.5rem);
+
+  /* ---- Layout -------------------------------------------------------- */
+  --shell: 78rem;
+  --shell-wide: 92rem;
+  --shell-text: 42rem;
+  --gutter: clamp(1.125rem, 4vw, 3rem);
+  --nav-h: 4.25rem;
+
+  /* ---- Plate frame (signature 1) ------------------------------------ */
+  --plate-notch: 0.6rem;
+  --plate-inset: 0.5rem;
+  --radius-pill: 999px;
+
+  /* ---- Motion -------------------------------------------------------- */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-stamp: cubic-bezier(0.16, 1, 0.3, 1);
+  --d-fast: 160ms;
+  --d-mid: 260ms;
+  --d-entrance: 760ms;
+
+  --z-nav: 60;
+  --z-menu: 70;
+  --z-skip: 90;
+}
+
+/* Short landscape viewports: reclaim vertical space without un-sticking the
+   bar, which would scroll the menu button out of reach. */
+@media (max-height: 460px) and (orientation: landscape) {
+  :root {
+    --nav-h: 3.25rem;
+    --section-y: clamp(3rem, 7vw, 5rem);
+  }
+}

@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { site, nav } from '../data/site';
+---
+
+<Base title={`Page not found | ${site.name}`} description="That page does not exist. Here is the way back." noindex>
+  <PageHero
+    title="Nothing stamped here"
+    lead="That page does not exist. It may have moved, or the link may be wrong."
+    crumbs={[{ label: 'Not found' }]}
+  >
+    <div class="btn-row">
+      <a class="btn" href="/">Back to the homepage <span class="btn__arrow" aria-hidden="true">&rarr;</span></a>
+    </div>
+  </PageHero>
+
+  <section class="section section--tight">
+    <div class="shell shell--text">
+      <ul class="nf__list">
+        {nav.map((item) => (
+          <li><a href={item.href}><span>{item.label}</span><span aria-hidden="true">&rarr;</span></a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf__list { border-top: 1px solid var(--rule-dark); }
+  .nf__list li { border-bottom: 1px solid var(--rule-dark); }
+  .nf__list a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: var(--s-5);
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    text-transform: uppercase;
+    letter-spacing: var(--track-display);
+    text-decoration: none;
+    transition: color var(--d-fast) var(--ease);
+  }
+  .nf__list a span:last-child { color: var(--orange); }
+  .nf__list a:hover { color: var(--orange); }
+</style>

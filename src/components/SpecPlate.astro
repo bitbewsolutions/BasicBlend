@@ -1,0 +1,35 @@
+---
+/**
+ * The nameplate: label / value rows in mono, like the rating plate on the
+ * products these clients make. Values describe the kind of work, never a count.
+ */
+interface Props {
+  rows: { label: string; value: string }[];
+}
+const { rows } = Astro.props;
+---
+
+<dl class="sp plate plate--flat">
+  {rows.map((row) => (
+    <div class="sp__row">
+      <dt class="spec spec--sm">{row.label}</dt>
+      <dd>{row.value}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .sp { border-color: var(--rule-dark-strong); }
+  .sp__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding: var(--s-3) var(--s-4);
+  }
+  .sp__row + .sp__row { border-top: 1px solid var(--rule-dark); }
+  .sp__row dt { color: var(--cream-faint); }
+  /* Values in the body face: the mono caps label carries the nameplate look,
+     and long values stay readable. */
+  .sp__row { align-items: baseline; }
+  .sp__row dd { margin: 0; color: var(--cream); text-align: right; font-size: var(--t-small); }
+</style>

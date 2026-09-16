@@ -1,0 +1,66 @@
+---
+import { Image } from 'astro:assets';
+import type { CaseStudy } from '../data/work';
+
+/**
+ * Image-led link to a case study. The cover is the delivered work itself,
+ * shown untreated; the metadata sits beneath like a nameplate.
+ */
+interface Props {
+  study: CaseStudy;
+  size?: 'large' | 'small';
+  delay?: number;
+}
+const { study, size = 'small', delay = 0 } = Astro.props;
+---
+
+<article class:list={['cc', `cc--${size}`]} data-reveal style={`--reveal-delay:${delay}ms`}>
+  <a class="cc__link" href={`/work/${study.slug}/`}>
+    <figure class="cc__media plate">
+      <Image
+        src={study.cover}
+        alt={study.coverAlt}
+        widths={size === 'large' ? [480, 720, 1024] : [360, 560, 720]}
+        sizes={size === 'large' ? '(min-width: 1024px) 44rem, 92vw' : '(min-width: 1024px) 26rem, 92vw'}
+        loading="lazy"
+        class="cc__img"
+      />
+    </figure>
+    <div class="cc__meta">
+      <p class="spec spec--sm spec--lit">{study.sector}</p>
+      <h3 class="cc__client display display--title">{study.client}</h3>
+      <p class="cc__teaser">{study.teaser}</p>
+      <span class="cc__go link-bolt" aria-hidden="true">View case &rarr;</span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .cc__link { display: grid; gap: var(--s-5); text-decoration: none; color: inherit; }
+
+  .cc__media { margin: 0; padding: var(--s-2); overflow: hidden; }
+  .cc__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 700ms var(--ease);
+  }
+  .cc__link:hover .cc__img { transform: scale(1.035); }
+  .cc__link:hover .cc__media { border-color: var(--purple); }
+
+  .cc__meta { display: grid; gap: var(--s-2); }
+  .cc__client { transition: color var(--d-fast) var(--ease); }
+  .cc__link:hover .cc__client { color: var(--orange); }
+  .cc__teaser { color: var(--cream-dim); max-width: 44ch; }
+  .cc__go { margin-top: var(--s-2); justify-self: start; }
+
+  @media (min-width: 1024px) {
+    .cc--large .cc__link {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      align-items: end;
+      gap: var(--s-8);
+    }
+  }
+</style>

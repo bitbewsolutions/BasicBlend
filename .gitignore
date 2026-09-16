@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.netlify/
+.DS_Store
+*.log
+
+# Client source material kept local, not published (briefs, catalogue, raw footage)
+/*.pdf
+/*.mp4

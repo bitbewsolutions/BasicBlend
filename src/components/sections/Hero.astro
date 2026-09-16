@@ -1,0 +1,187 @@
+---
+import Bolt from '../Bolt.astro';
+import { site, whatsappLink } from '../../data/site';
+import { services } from '../../data/services';
+
+/**
+ * Home hero. The client's own tagline is the headline; the lead says plainly
+ * what BasicBlend does and that it works with businesses at every stage; the
+ * service links underneath answer "what exactly?" in one glance.
+ *
+ * All three brand colours meet here. The second line sits on a solid purple
+ * slab with ink type — the treatment on page 2 of the client's catalogue —
+ * rather than as light violet text on black.
+ */
+const quick = ['branding-design', 'websites-platforms', 'social-media-management', 'paid-ads-lead-generation']
+  .map((slug) => services.find((s) => s.slug === slug)!);
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__inner shell shell--wide">
+    <div class="hero__copy">
+      <h1 class="hero__title display display--mega" id="hero-title">
+        <span class="hero__line" data-stamp style="--reveal-delay:60ms">Your brand,</span>
+        <span class="hero__line hero__line--slab" data-stamp style="--reveal-delay:190ms">
+          <span class="hero__slab">our blend.</span><Bolt size="0.32em" strike />
+        </span>
+      </h1>
+
+      <p class="hero__lead lead" data-reveal style="--reveal-delay:360ms">
+        BasicBlend is a Chandigarh studio that builds brands, websites, platforms, content and ad
+        campaigns. We work with businesses just getting started, companies ready to grow, and
+        established names alike.
+      </p>
+
+      <div class="hero__actions btn-row" data-reveal style="--reveal-delay:460ms">
+        <a class="btn" href="/contact/">Start a project <span class="btn__arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn btn--ghost" href="/work/">See our work</a>
+      </div>
+
+      <nav class="hero__quick" aria-label="Popular services" data-reveal style="--reveal-delay:560ms">
+        <ul>
+          {quick.map((s) => (
+            <li><a href={`/services/${s.slug}/`}><span>{s.short}</span><span aria-hidden="true">&rarr;</span></a></li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+
+    <figure class="hero__reel" data-reveal style="--reveal-delay:260ms">
+      <div class="hero__reel-frame plate plate--inset">
+        <video
+          class="hero__video"
+          poster="/media/navata-bullet-blender.jpg"
+          data-src="/media/navata-bullet-blender.mp4"
+          width="352"
+          height="624"
+          muted
+          loop
+          playsinline
+          preload="none"
+          aria-label="Product film produced for Navata Appliances, showing the Bullet Blender preparing fruit and vegetable drinks."
+        ></video>
+      </div>
+      <figcaption class="hero__reel-cap">
+        <span class="spec spec--sm spec--lit">Recent work</span>
+        <span class="meta">Navata Appliances &middot; product film</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="hero__base shell shell--wide">
+    <hr class="hairline" />
+    <p class="hero__base-row">
+      <span class="meta">Studio in {site.address.sector}, {site.address.city}</span>
+      <a class="link-bolt" href={whatsappLink()} target="_blank" rel="noopener noreferrer"><Bolt />WhatsApp us</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; padding-block: clamp(2.25rem, 4.5vw, 3.5rem) 0; overflow: hidden; }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset-block-start: -30%;
+    inset-inline-start: -10%;
+    width: 64rem;
+    height: 42rem;
+    background: radial-gradient(ellipse at 30% 40%, rgba(162, 106, 196, 0.2), transparent 62%);
+    pointer-events: none;
+  }
+
+  .hero__inner { position: relative; z-index: 1; display: grid; gap: var(--s-8); align-items: center; padding-bottom: var(--s-8); }
+
+  .hero__title { margin: 0; padding-top: var(--s-2); }
+  .hero__line { display: block; }
+  .hero__line--slab { display: flex; align-items: center; gap: 0.14em; margin-top: 0.06em; }
+  .hero__slab {
+    background: var(--purple);
+    color: var(--ink);
+    padding: 0.08em 0.12em 0;
+    margin-inline-start: -0.04em;
+  }
+
+  .hero__lead { margin-top: var(--s-5); max-width: 50ch; }
+  .hero__actions { margin-top: var(--s-6); }
+
+  .hero__quick { margin-top: var(--s-7); border-top: 1px solid var(--rule-dark); }
+  .hero__quick ul { display: grid; }
+  .hero__quick li { border-bottom: 1px solid var(--rule-dark); }
+  .hero__quick a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-4);
+    padding-block: var(--s-3);
+    font-family: var(--font-spec);
+    font-size: var(--t-spec);
+    letter-spacing: var(--track-spec);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--cream-dim);
+    transition: color var(--d-fast) var(--ease);
+  }
+  .hero__quick a span:last-child { color: var(--orange); transition: transform var(--d-fast) var(--ease); }
+  .hero__quick a:hover { color: var(--cream); }
+  .hero__quick a:hover span:last-child { transform: translateX(4px); }
+
+  .hero__reel { margin: 0; justify-self: start; width: min(15rem, 62vw); }
+  .hero__reel-frame { padding: var(--s-3); }
+  .hero__video { width: 100%; height: auto; aspect-ratio: 352 / 624; object-fit: cover; background: var(--plum); }
+  .hero__reel-cap { display: grid; gap: var(--s-1); margin-top: var(--s-4); }
+
+  .hero__base { position: relative; padding-bottom: var(--s-6); }
+  .hero__base-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4) var(--s-6);
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--s-5);
+  }
+
+  @media (min-width: 760px) {
+    .hero__reel { width: min(17rem, 40vw); }
+    .hero__quick ul { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); }
+    .hero__quick li { border-bottom: 0; }
+    .hero__quick a { padding-block: var(--s-4) 0; }
+  }
+
+  @media (min-width: 1024px) {
+    .hero__inner { grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-10); align-items: end; }
+    .hero__title { font-size: var(--t-mega-wide); }
+    .hero__reel { justify-self: end; width: 17.5rem; }
+  }
+
+  @media (max-height: 460px) and (orientation: landscape) {
+    .hero__title { font-size: clamp(1.9rem, 5.5vw, 3rem); padding-top: 0; }
+    .hero { padding-block-start: var(--s-4); }
+    .hero__inner { padding-bottom: var(--s-6); gap: var(--s-5); }
+    .hero__reel, .hero__quick { display: none; }
+    .hero__lead { margin-top: var(--s-3); }
+    .hero__actions { margin-top: var(--s-3); }
+  }
+</style>
+
+<script>
+  /**
+   * The hero film is ambient, so it never competes with the critical path: no
+   * src until after `load`, then it plays only while on screen.
+   */
+  const video = document.querySelector<HTMLVideoElement>('.hero__video');
+  if (video && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const start = () => {
+      if (video.dataset.src) video.src = video.dataset.src;
+      new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) e.isIntersecting ? video.play().catch(() => {}) : video.pause();
+        },
+        { threshold: 0.25 }
+      ).observe(video);
+    };
+    const defer = () =>
+      'requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 1200 }) : setTimeout(start, 400);
+    document.readyState === 'complete' ? defer() : addEventListener('load', defer, { once: true });
+  }
+</script>

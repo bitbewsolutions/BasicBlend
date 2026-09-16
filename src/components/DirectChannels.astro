@@ -1,0 +1,66 @@
+---
+import Bolt from './Bolt.astro';
+import { site, addressLines, whatsappLink } from '../data/site';
+
+/** Phone, WhatsApp, email and the studio address, as a nameplate. */
+---
+
+<dl class="dc plate plate--flat">
+  <div class="dc__row">
+    <dt class="spec spec--sm">WhatsApp</dt>
+    <dd><a href={whatsappLink()} target="_blank" rel="noopener noreferrer" data-nums>{site.phoneDisplay}</a></dd>
+  </div>
+  <div class="dc__row">
+    <dt class="spec spec--sm">Phone</dt>
+    <dd><a href={`tel:${site.phoneIntl}`} data-nums>{site.phoneDisplay}</a></dd>
+  </div>
+  <div class="dc__row">
+    <dt class="spec spec--sm">Email</dt>
+    <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+  </div>
+  <div class="dc__row">
+    <dt class="spec spec--sm">Social</dt>
+    <dd class="dc__social">
+      <a href={site.links.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href={site.links.facebook} target="_blank" rel="noopener noreferrer">Facebook</a>
+    </dd>
+  </div>
+  <div class="dc__row">
+    <dt class="spec spec--sm">Studio</dt>
+    <dd>
+      <address>{addressLines.map((line) => <span>{line}</span>)}</address>
+      <a class="link-bolt dc__dir" href={site.links.maps} target="_blank" rel="noopener noreferrer">
+        <Bolt />Open in Maps
+      </a>
+    </dd>
+  </div>
+</dl>
+
+<style>
+  .dc { border-color: var(--rule-dark-strong); }
+  .dc__row {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: var(--s-3);
+    padding: var(--s-4);
+    align-items: baseline;
+  }
+  .dc__row + .dc__row { border-top: 1px solid var(--rule-dark); }
+  .dc__row dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  .dc__row dd > a:not(.link-bolt),
+  .dc__social a {
+    color: var(--cream);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule-dark-strong);
+    transition: color var(--d-fast) var(--ease), border-color var(--d-fast) var(--ease);
+  }
+  .dc__row dd > a:not(.link-bolt):hover,
+  .dc__social a:hover { color: var(--orange); border-color: var(--orange); }
+  .dc__social { display: flex; flex-wrap: wrap; gap: var(--s-4); }
+  address { font-style: normal; display: grid; gap: 0.1rem; color: var(--cream-dim); }
+  .dc__dir { margin-top: var(--s-3); }
+
+  @media (min-width: 560px) {
+    .dc__row { grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--s-4); }
+  }
+</style>

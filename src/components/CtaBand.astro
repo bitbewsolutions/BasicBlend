@@ -1,0 +1,59 @@
+---
+import Bolt from './Bolt.astro';
+import { site, whatsappLink } from '../data/site';
+
+/**
+ * The closing call to action on every page — a purple block, as in the
+ * catalogue. On purple only near-black ink passes contrast, so the band is
+ * set entirely in ink with a black button.
+ */
+interface Props {
+  title?: string;
+  lead?: string;
+  /** Prefilled WhatsApp opener, so the message says where it came from. */
+  message?: string;
+}
+const {
+  title = 'Tell us what you are building',
+  lead = 'A new brand, a website, a campaign or all three. Send a few lines and we will come back with how we would approach it.',
+  message,
+} = Astro.props;
+---
+
+<section class="cta on-purple" aria-labelledby="cta-title">
+  <div class="shell shell--wide cta__inner">
+    <h2 class="display cta__title" id="cta-title" data-stamp>{title}</h2>
+    <div class="cta__side">
+      <p class="lead cta__lead">{lead}</p>
+      <div class="btn-row cta__actions">
+        <a class="btn" href="/contact/">Start a project <span class="btn__arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn btn--ghost" href={whatsappLink(message)} target="_blank" rel="noopener noreferrer">
+          <Bolt />WhatsApp {site.phoneDisplay}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta { padding-block: var(--section-y-tight); position: relative; overflow: hidden; }
+  /* A giant outlined bolt, cropped off the edge — the catalogue's cutout energy. */
+  .cta::after {
+    content: '';
+    position: absolute;
+    inset-block: -20%;
+    inset-inline-end: -4%;
+    width: 22rem;
+    background: rgba(16, 12, 18, 0.07);
+    clip-path: polygon(68% 0, 8% 55%, 42% 55%, 28% 100%, 92% 43%, 57% 43%);
+    pointer-events: none;
+  }
+  .cta__inner { position: relative; z-index: 1; display: grid; gap: var(--s-6); align-items: end; }
+  .cta__title { color: var(--ink); max-width: 14ch; }
+  .cta__lead { max-width: 40ch; }
+  .cta__actions { margin-top: var(--s-5); }
+
+  @media (min-width: 1024px) {
+    .cta__inner { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--s-9); }
+  }
+</style>

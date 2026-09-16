@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactForm from '../components/ContactForm.astro';
+import DirectChannels from '../components/DirectChannels.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+
+const next = [
+  { title: 'We read it', body: 'We look at your business and anything you already have running.' },
+  { title: 'We reply', body: 'With questions, or a first view of how we would approach it.' },
+  { title: 'We plan', body: 'If it is a fit, we agree the scope, timing and cost together.' },
+];
+---
+
+<Base
+  title="Contact BasicBlend — Start a Project in Chandigarh"
+  description="Start a project with BasicBlend. Message us on WhatsApp, call, email, or send an enquiry. Our studio is in Sector 22-D, Chandigarh."
+>
+  <PageHero
+    title="Tell us what you are building"
+    lead="A brand from scratch, a new website, a campaign, or you are not sure yet. Send a few lines, or message us on WhatsApp if that is easier."
+    crumbs={[{ label: 'Contact' }]}
+  />
+
+  <section class="section" aria-label="Contact options">
+    <div class="shell contact">
+      <div class="contact__form">
+        <h2 class="display display--title contact__h">Send an enquiry</h2>
+        <ContactForm />
+      </div>
+      <aside class="contact__side">
+        <h2 class="display display--title contact__h">Or reach us directly</h2>
+        <DirectChannels />
+      </aside>
+    </div>
+  </section>
+
+  <section class="section on-plum" aria-labelledby="next-title">
+    <div class="shell">
+      <h2 class="display next-title" id="next-title" data-stamp>What happens next</h2>
+      <ProcessSteps steps={next} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact { display: grid; gap: var(--s-9); align-items: start; }
+  .contact__h { margin-bottom: var(--s-6); }
+  .next-title { margin-bottom: var(--s-8); }
+
+  @media (min-width: 1024px) {
+    .contact { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--s-9); }
+    .contact__side { position: sticky; top: calc(var(--nav-h) + var(--s-6)); }
+  }
+</style>

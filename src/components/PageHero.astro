@@ -1,0 +1,65 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+
+/**
+ * Hero for every inner page. Breadcrumbs, one h1, a lead, optional actions
+ * (default slot) and an optional visual (`aside` slot) that sits beside the
+ * text on wide screens.
+ */
+interface Props {
+  title: string;
+  lead?: string;
+  crumbs: { label: string; href?: string }[];
+}
+const { title, lead, crumbs } = Astro.props;
+const hasAside = Astro.slots.has('aside');
+const hasActions = Astro.slots.has('default');
+---
+
+<header class:list={['ph', hasAside && 'ph--aside']}>
+  <div class="shell shell--wide ph__inner">
+    <div class="ph__text">
+      <Breadcrumbs items={crumbs} />
+      <h1 class="display display--hero ph__title" data-stamp>{title}</h1>
+      {lead && <p class="lead ph__lead" data-reveal style="--reveal-delay:120ms">{lead}</p>}
+      {hasActions && (
+        <div class="ph__actions" data-reveal style="--reveal-delay:200ms">
+          <slot />
+        </div>
+      )}
+    </div>
+    {hasAside && (
+      <div class="ph__aside" data-reveal style="--reveal-delay:160ms">
+        <slot name="aside" />
+      </div>
+    )}
+  </div>
+</header>
+
+<style>
+  .ph {
+    position: relative;
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem);
+    border-bottom: 1px solid var(--rule-dark);
+    overflow: hidden;
+  }
+  /* One soft purple field behind the type. */
+  .ph::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -40%;
+    inset-inline-end: -15%;
+    width: 55rem;
+    height: 40rem;
+    background: radial-gradient(ellipse at 60% 40%, rgba(162, 106, 196, 0.16), transparent 62%);
+    pointer-events: none;
+  }
+  .ph__inner { position: relative; display: grid; gap: var(--s-8); align-items: end; }
+  .ph__title { margin-top: var(--s-6); max-width: 16ch; }
+  .ph__lead { margin-top: var(--s-5); max-width: 52ch; }
+  .ph__actions { margin-top: var(--s-6); }
+
+  @media (min-width: 1024px) {
+    .ph--aside .ph__inner { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--s-9); }
+  }
+</style>

@@ -1,0 +1,254 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/basicblend-logo.png';
+import { nav, site, whatsappLink } from '../data/site';
+import Bolt from './Bolt.astro';
+
+// A link is current on its own page and on every page beneath it.
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="nav" data-nav>
+  <span class="nav__progress" data-progress aria-hidden="true"></span>
+
+  <div class="nav__inner shell shell--wide">
+    <a class="nav__brand" href="/" aria-label={`${site.name} — home`}>
+      <Image src={logo} alt="" widths={[240, 480]} sizes="150px" loading="eager" fetchpriority="high" class="nav__logo" />
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="nav__actions">
+      <a class="nav__wa" href={whatsappLink()} target="_blank" rel="noopener noreferrer">
+        <Bolt /><span>WhatsApp</span>
+      </a>
+      <a class="btn nav__cta" href="/contact/">Start a project</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-panel" data-menu-toggle>
+        <span class="vh">Menu</span>
+        <span class="nav__bars" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!--
+  The panel is a SIBLING of <header>, not a child: `backdrop-filter` on .nav
+  makes it the containing block for fixed-position descendants, which would
+  collapse this panel to the height of the bar.
+-->
+<div class="nav__panel" id="nav-panel" data-menu-panel hidden>
+  <nav aria-label="Menu">
+    <ul class="nav__panel-list">
+      {nav.map((item) => (
+        <li>
+          <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <div class="nav__panel-foot">
+    <a class="btn" href="/contact/">Start a project</a>
+    <a class="link-bolt" href={whatsappLink()} target="_blank" rel="noopener noreferrer">
+      <Bolt />WhatsApp {site.phoneDisplay}
+    </a>
+  </div>
+</div>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-nav);
+    background: color-mix(in srgb, var(--stock) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid var(--rule-dark);
+    view-transition-name: site-nav;
+  }
+
+  .nav__progress {
+    position: absolute;
+    inset-block-end: -1px;
+    inset-inline-start: 0;
+    height: 2px;
+    width: 100%;
+    background: var(--orange);
+    transform: scaleX(var(--progress, 0));
+    transform-origin: left;
+  }
+
+  .nav__inner { height: var(--nav-h); display: flex; align-items: center; gap: var(--s-5); }
+  .nav__brand { display: flex; align-items: center; flex: none; }
+  .nav__logo { width: 130px; height: auto; }
+  @media (min-width: 760px) { .nav__logo { width: 150px; } }
+
+  .nav__links { display: none; margin-inline-start: auto; }
+  .nav__links ul { display: flex; gap: var(--s-6); }
+  .nav__links a {
+    position: relative;
+    font-family: var(--font-spec);
+    font-size: var(--t-spec);
+    letter-spacing: var(--track-spec);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--cream-dim);
+    padding-block: var(--s-2);
+    transition: color var(--d-fast) var(--ease);
+  }
+  .nav__links a::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: var(--orange);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--d-mid) var(--ease);
+  }
+  .nav__links a:hover { color: var(--cream); }
+  .nav__links a:hover::after,
+  .nav__links a[aria-current='page']::after { transform: scaleX(1); }
+  .nav__links a[aria-current='page'] { color: var(--cream); }
+
+  .nav__actions { display: flex; align-items: center; gap: var(--s-4); margin-inline-start: auto; }
+
+  .nav__wa {
+    display: none;
+    align-items: center;
+    gap: var(--s-2);
+    margin-inline-end: var(--s-2);
+    font-family: var(--font-spec);
+    font-size: var(--t-spec-sm);
+    letter-spacing: var(--track-spec);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--cream-dim);
+    transition: color var(--d-fast) var(--ease);
+  }
+  .nav__wa:hover { color: var(--orange); }
+
+  /* The bar is tight at 1024px; this label must stay on one line. */
+  .nav__cta { display: none; padding: 0.7rem 1.2rem; white-space: nowrap; }
+
+  .nav__toggle {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--rule-dark-strong);
+    clip-path: polygon(0 0, calc(100% - 0.4rem) 0, 100% 0.4rem, 100% 100%, 0 100%);
+    transition: border-color var(--d-fast) var(--ease);
+  }
+  .nav__toggle:hover { border-color: var(--orange); }
+  .nav__bars { display: grid; gap: 5px; width: 1.05rem; }
+  .nav__bars i { display: block; height: 1.5px; background: var(--cream); transition: transform var(--d-mid) var(--ease); }
+  .nav__toggle[aria-expanded='true'] .nav__bars i:first-child { transform: translateY(3.25px) rotate(45deg); }
+  .nav__toggle[aria-expanded='true'] .nav__bars i:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+
+  .nav__panel {
+    position: fixed;
+    inset: var(--nav-h) 0 0;
+    background: var(--stock);
+    border-top: 1px solid var(--rule-dark);
+    padding: var(--s-6) var(--gutter) var(--s-8);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--s-8);
+    overflow-y: auto;
+    z-index: var(--z-menu);
+  }
+  .nav__panel[hidden] { display: none; }
+  .nav__panel-list li + li { border-top: 1px solid var(--rule-dark); }
+  .nav__panel-list a {
+    display: block;
+    padding-block: var(--s-5);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 10vw, 2.75rem);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--track-display);
+    text-decoration: none;
+    color: var(--cream);
+    transition: color var(--d-fast) var(--ease);
+  }
+  .nav__panel-list a:hover,
+  .nav__panel-list a[aria-current='page'] { color: var(--orange); }
+  .nav__panel-foot { display: grid; gap: var(--s-5); justify-items: start; }
+
+  @media (min-width: 760px) {
+    .nav__wa { display: inline-flex; }
+  }
+  /* The toggle survives until the inline links appear, or there is no
+     navigation at all between 760px and 1024px. */
+  @media (min-width: 1024px) {
+    .nav__links { display: block; }
+    .nav__actions { margin-inline-start: 0; }
+    .nav__cta { display: inline-flex; }
+    .nav__toggle { display: none; }
+    .nav__panel { display: none !important; }
+  }
+</style>
+
+<script>
+  // --- Mobile menu: focus-trapped, Esc to close, restores focus on exit. ---
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+
+  if (toggle && panel) {
+    const focusables = () =>
+      Array.from(panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')).filter(
+        (el) => el.offsetParent !== null
+      );
+
+    const setOpen = (open: boolean, restoreFocus = true) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+      document.body.style.overflow = open ? 'hidden' : '';
+      if (open) focusables()[0]?.focus();
+      else if (restoreFocus) toggle.focus();
+    };
+
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+
+    // Following a link navigates away; just release the lock.
+    panel.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false, false)));
+
+    document.addEventListener('keydown', (e) => {
+      if (panel.hidden) return;
+      if (e.key === 'Escape') { setOpen(false); return; }
+      if (e.key !== 'Tab') return;
+      const items = focusables();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
+      if (e.matches && !panel.hidden) setOpen(false, false);
+    });
+  }
+
+  // --- Scroll progress on the nav's bottom edge. ---
+  const progress = document.querySelector<HTMLElement>('[data-progress]');
+  if (progress && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let queued = false;
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.setProperty('--progress', (max > 0 ? Math.min(1, scrollY / max) : 0).toFixed(4));
+      queued = false;
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+  }
+</script>

@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import AudienceGrid from '../components/AudienceGrid.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Bolt from '../components/Bolt.astro';
+import { process, reasons } from '../data/services';
+import { site, addressLines } from '../data/site';
+
+/**
+ * About. Built from the catalogue's About / Mission / Vision / Why-choose /
+ * Process pages, rewritten for the web. No team names, headcount or founding
+ * year appear because none were supplied.
+ */
+---
+
+<Base
+  title="About BasicBlend — Branding, Web & Marketing Studio in Chandigarh"
+  description="BasicBlend is a Chandigarh studio that blends strategy, design, content and technology to help businesses of every size build their brand and grow."
+>
+  <PageHero
+    title="We blend strategy, design and code"
+    lead="BasicBlend is a digital studio in Chandigarh. We combine creativity, strategy and technology to help businesses, from startups to established brands, build a presence people notice and trust."
+    crumbs={[{ label: 'About' }]}
+  />
+
+  <section class="section" aria-labelledby="purpose-title">
+    <div class="shell">
+      <h2 class="vh" id="purpose-title">Mission and vision</h2>
+      <div class="purpose">
+        <article class="purpose__item plate plate--inset" data-reveal>
+          <h3 class="spec spec--sm spec--lit">Our mission</h3>
+          <p class="purpose__text">
+            To give businesses marketing that is creative, data-driven and built around them: work that
+            raises their visibility, deepens engagement and drives growth, by connecting them with the
+            people they want to reach.
+          </p>
+        </article>
+        <article class="purpose__item plate plate--inset" data-reveal style="--reveal-delay:100ms">
+          <h3 class="spec spec--sm spec--lit">Our vision</h3>
+          <p class="purpose__text">
+            To be recognised for creativity, strategic thinking and work that makes an impact, in a
+            future where businesses of every size use digital marketing to reach their full potential.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section on-paper" aria-labelledby="who-title">
+    <div class="shell">
+      <SectionHead label="Who we work with" id="who-title" title="Every stage, every kind of business" align="wide" />
+      <AudienceGrid />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="why-title">
+    <div class="shell why">
+      <h2 class="display why__title" id="why-title" data-stamp>Why BasicBlend</h2>
+      <dl class="why__list">
+        {reasons.map((r, i) => (
+          <div class="why__row" data-reveal style={`--reveal-delay:${i * 60}ms`}>
+            <dt class="why__term"><Bolt />{r.title}</dt>
+            <dd class="why__def">{r.body}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="section on-plum" aria-labelledby="process-title">
+    <div class="shell">
+      <SectionHead
+        label="Process"
+        id="process-title"
+        title="How we work"
+        lead="Whatever the project, it moves through the same four steps."
+        align="wide"
+      />
+      <ProcessSteps steps={process} />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="studio-title">
+    <div class="shell studio">
+      <div>
+        <SectionHead label="Studio" id="studio-title" title="Come and see us" />
+        <p class="lead">
+          We work from our studio in {site.address.sector}, {site.address.city}. Drop in, or message us
+          first so we know to expect you.
+        </p>
+      </div>
+      <div class="studio__card plate plate--inset" data-reveal>
+        <address class="studio__addr">{addressLines.map((line) => <span>{line}</span>)}</address>
+        <div class="btn-row">
+          <a class="btn" href={site.links.maps} target="_blank" rel="noopener noreferrer">Get directions</a>
+          <a class="btn btn--ghost" href="/contact/">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .purpose { display: grid; gap: var(--s-6); }
+  .purpose__item { padding: var(--s-7) var(--s-6); }
+  .purpose__text {
+    margin-top: var(--s-5);
+    font-size: var(--t-lead);
+    line-height: 1.5;
+    color: var(--cream);
+  }
+
+  .why { display: grid; gap: var(--s-7); }
+  .why__list { display: grid; }
+  .why__row { display: grid; gap: var(--s-2); padding-block: var(--s-5); border-top: 1px solid var(--rule-dark); }
+  .why__row:last-child { border-bottom: 1px solid var(--rule-dark); }
+  .why__term { display: flex; align-items: baseline; gap: var(--s-3); font-size: var(--t-body-lg); font-weight: 700; }
+  .why__term :global(.bolt) { width: 0.6em; }
+  .why__def { margin: 0; color: var(--cream-dim); max-width: 60ch; }
+
+  .studio { display: grid; gap: var(--s-7); align-items: center; }
+  .studio__card { padding: var(--s-7) var(--s-6); display: grid; gap: var(--s-6); }
+  .studio__addr { font-style: normal; display: grid; gap: var(--s-1); font-size: var(--t-lead); color: var(--cream); }
+
+  @media (min-width: 860px) {
+    .purpose { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .why { grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); gap: var(--s-9); align-items: start; }
+    .why__title { position: sticky; top: calc(var(--nav-h) + var(--s-6)); }
+    .why__row { grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); gap: var(--s-6); align-items: baseline; }
+    .studio { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-9); }
+  }
+</style>

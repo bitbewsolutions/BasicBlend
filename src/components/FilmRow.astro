@@ -1,0 +1,163 @@
+---
+import Bolt from './Bolt.astro';
+import type { Film } from '../data/work';
+
+/**
+ * Vertical production films at phone scale (their native format — the sources
+ * are 352×624 and are never shown larger than that).
+ *
+ * Sources attach only as a film nears the viewport, so a visitor who never
+ * scrolls here downloads no video. Films play muted while visible; sound is
+ * opt-in and only one film can be unmuted at a time.
+ */
+interface Props {
+  films: Film[];
+}
+const { films } = Astro.props;
+---
+
+<ul class="films" data-films>
+  {films.map((film, i) => (
+    <li class="films__item" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+      <figure class="film plate plate--inset">
+        <div class="film__frame">
+          <video
+            class="film__video"
+            data-src={film.src}
+            poster={film.poster}
+            width="352"
+            height="624"
+            muted
+            loop
+            playsinline
+            preload="none"
+            aria-label={film.alt}
+          ></video>
+          <button class="film__sound" type="button" data-sound aria-pressed="false">
+            <span class="vh" data-sound-label>Turn sound on</span>
+            <span class="film__sound-mark" aria-hidden="true"><Bolt /></span>
+          </button>
+        </div>
+        <figcaption class="film__cap">
+          <span class="spec spec--sm spec--lit">{film.label}</span>
+          <strong class="film__client">{film.client}</strong>
+          <span class="meta">{film.note}</span>
+        </figcaption>
+      </figure>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .films {
+    display: flex;
+    gap: var(--s-4);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    padding-bottom: var(--s-4);
+    scrollbar-width: thin;
+  }
+  .films__item { flex: none; width: min(15rem, 68vw); scroll-snap-align: start; }
+
+  .film { margin: 0; padding: var(--s-3); height: 100%; }
+  .film__frame { position: relative; }
+  .film__video { width: 100%; height: auto; aspect-ratio: 352 / 624; object-fit: cover; background: var(--plum); }
+
+  .film__sound {
+    position: absolute;
+    inset-block-end: var(--s-3);
+    inset-inline-end: var(--s-3);
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.72);
+    border: 1px solid var(--rule-dark-strong);
+    transition: border-color var(--d-fast) var(--ease);
+  }
+  .film__sound:hover,
+  .film__sound[aria-pressed='true'] { border-color: var(--orange); }
+  .film__sound-mark { display: grid; place-items: center; opacity: 0.55; }
+  .film__sound[aria-pressed='true'] .film__sound-mark { opacity: 1; }
+  .film__sound-mark :global(.bolt) { width: 0.6rem; }
+
+  .film__cap { display: grid; gap: var(--s-1); margin-top: var(--s-4); }
+  .film__client { font-size: var(--t-small); font-weight: 500; color: var(--cream); }
+
+  @media (min-width: 860px) {
+    .films {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 17rem));
+      gap: var(--s-6);
+      overflow: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+      padding-bottom: 0;
+    }
+    .films__item { width: auto; }
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const videos = Array.from(document.querySelectorAll<HTMLVideoElement>('[data-films] video'));
+  const attach = (v: HTMLVideoElement) => {
+    if (v.dataset.src && !v.getAttribute('src')) v.src = v.dataset.src;
+  };
+
+  const loader = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          attach(e.target as HTMLVideoElement);
+          loader.unobserve(e.target);
+        }
+      }
+    },
+    { rootMargin: '300px' }
+  );
+  videos.forEach((v) => loader.observe(v));
+
+  if (!reduced) {
+    const player = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const v = e.target as HTMLVideoElement;
+          if (e.isIntersecting) {
+            attach(v);
+            v.play().catch(() => {});
+          } else {
+            v.pause();
+          }
+        }
+      },
+      { threshold: 0.35 }
+    );
+    videos.forEach((v) => player.observe(v));
+  }
+
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-films] [data-sound]'));
+  const setState = (btn: HTMLButtonElement, on: boolean) => {
+    btn.setAttribute('aria-pressed', String(on));
+    const label = btn.querySelector('[data-sound-label]');
+    if (label) label.textContent = on ? 'Turn sound off' : 'Turn sound on';
+  };
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const video = btn.parentElement?.querySelector('video');
+      if (!video) return;
+      const turningOn = video.muted;
+      if (turningOn) {
+        videos.forEach((v) => { if (v !== video) v.muted = true; });
+        buttons.forEach((b) => { if (b !== btn) setState(b, false); });
+        attach(video);
+        video.play().catch(() => {});
+      }
+      video.muted = !turningOn;
+      setState(btn, turningOn);
+    });
+  });
+</script>
