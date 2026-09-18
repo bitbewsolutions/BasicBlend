@@ -2,8 +2,9 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/brand/basicblend-logo.png';
 import { site, addressLines, whatsappLink } from '../data/site';
-import { services } from '../data/services';
+import { groupServices } from '../data/services';
 import Bolt from './Bolt.astro';
+import BuiltByBitbew from './BuiltByBitbew.astro';
 
 const year = new Date().getFullYear();
 const pages = [
@@ -22,27 +23,21 @@ const pages = [
         <Image src={logo} alt={site.name} widths={[280, 560]} sizes="160px" loading="lazy" class="foot__logo" />
         <p class="foot__tag display display--title">{site.tagline}</p>
         <p class="meta foot__blurb">
-          Branding, websites, content and ads for businesses at every stage. Built in Chandigarh.
+          Basic Blend is a digital marketing agency in Chandigarh: branding, websites, content and
+          ads for businesses at every stage.
         </p>
       </div>
 
       <div class="foot__cols">
-        <nav class="foot__col" aria-label="Site">
-          <h2 class="spec spec--sm spec--lit">Studio</h2>
+        <nav class="foot__col" aria-labelledby="foot-studio">
+          <h2 class="foot__h" id="foot-studio"><Bolt size="0.5em" />Studio</h2>
           <ul class="foot__list">
             {pages.map((p) => <li><a href={p.href}>{p.label}</a></li>)}
           </ul>
         </nav>
 
-        <nav class="foot__col" aria-label="Services">
-          <h2 class="spec spec--sm spec--lit">Services</h2>
-          <ul class="foot__list">
-            {services.map((s) => <li><a href={`/services/${s.slug}/`}>{s.title}</a></li>)}
-          </ul>
-        </nav>
-
-        <section class="foot__col">
-          <h2 class="spec spec--sm spec--lit">Talk to us</h2>
+        <section class="foot__col" aria-labelledby="foot-talk">
+          <h2 class="foot__h" id="foot-talk"><Bolt size="0.5em" />Talk to us</h2>
           <ul class="foot__list">
             <li><a href={whatsappLink()} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
             <li><a href={`tel:${site.phoneIntl}`} data-nums>{site.phoneDisplay}</a></li>
@@ -52,13 +47,30 @@ const pages = [
           </ul>
         </section>
 
-        <section class="foot__col">
-          <h2 class="spec spec--sm spec--lit">Visit</h2>
+        <section class="foot__col" aria-labelledby="foot-visit">
+          <h2 class="foot__h" id="foot-visit"><Bolt size="0.5em" />Visit</h2>
           <address class="foot__addr">{addressLines.map((line) => <span>{line}</span>)}</address>
           <a class="link-bolt" href={site.links.maps} target="_blank" rel="noopener noreferrer"><Bolt />Directions</a>
         </section>
       </div>
     </div>
+
+    <nav class="foot__svc" aria-labelledby="foot-services">
+      <div class="foot__col foot__svc-head">
+        <h2 class="foot__h" id="foot-services"><Bolt size="0.5em" />Services</h2>
+        <a class="link-bolt" href="/services/"><Bolt />All services</a>
+      </div>
+      <div class="foot__groups">
+        {groupServices().map((g) => (
+          <div class="foot__group">
+            <h3 class="spec spec--sm spec--lit foot__group-label">{g.label}</h3>
+            <ul class="foot__list">
+              {g.services.map((s) => <li><a href={`/services/${s.slug}/`}>{s.title}</a></li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </nav>
 
     <hr class="hairline foot__rule" />
 
@@ -69,18 +81,39 @@ const pages = [
         <li><a href="/terms/">Terms &amp; conditions</a></li>
       </ul>
     </div>
+
+    <BuiltByBitbew />
   </div>
 </footer>
 
 <style>
-  .foot { border-top: 1px solid var(--rule-dark); padding-block: var(--s-9) var(--s-6); }
+  .foot { border-top: 1px solid var(--rule-dark); padding-block: var(--s-9) var(--s-4); }
   .foot__top { display: grid; gap: var(--s-8); }
   .foot__logo { width: 160px; height: auto; }
   .foot__tag { margin-top: var(--s-5); }
   .foot__blurb { margin-top: var(--s-3); max-width: 34ch; }
 
+  /* Every section starts on its own rule, under a display-face heading, so the
+     blocks read as separate even when they wrap onto several rows. */
+  .foot__col { border-top: 1px solid var(--rule-dark-strong); padding-top: var(--s-5); }
+  .foot__h {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-bottom: var(--s-5);
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--cream);
+  }
+  .foot__h :global(.bolt) { color: var(--orange); flex: none; }
+
   .foot__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--s-5); }
-  .foot__col h2 { margin-bottom: var(--s-4); }
+  /* Three blocks in two columns: the address gets the full row, not an orphan half. */
+  .foot__cols > :last-child { grid-column: 1 / -1; }
   .foot__list { display: grid; gap: var(--s-3); }
   .foot__list a, .foot__addr {
     font-size: var(--t-small);
@@ -90,6 +123,13 @@ const pages = [
   }
   .foot__list a:hover { color: var(--orange); }
   .foot__addr { display: grid; gap: 0.15rem; font-style: normal; margin-bottom: var(--s-4); }
+
+  .foot__svc { display: grid; gap: var(--s-6); margin-top: var(--s-8); }
+  .foot__svc-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s-4); }
+  .foot__svc-head .foot__h { margin-bottom: 0; }
+  .foot__groups { display: grid; gap: var(--s-6) var(--s-5); }
+  .foot__group { border-top: 1px solid var(--rule-dark-strong); padding-top: var(--s-5); }
+  .foot__group-label { margin-bottom: var(--s-4); }
 
   .foot__rule { margin-block: var(--s-8) var(--s-5); }
   .foot__base { display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-6); align-items: center; justify-content: space-between; }
@@ -105,6 +145,16 @@ const pages = [
   }
   .foot__legal a:hover { color: var(--orange); }
 
-  @media (min-width: 860px) { .foot__cols { grid-template-columns: 0.8fr 1.3fr 0.9fr 1.1fr; } }
-  @media (min-width: 1180px) { .foot__top { grid-template-columns: minmax(0, 19rem) minmax(0, 1fr); gap: var(--s-10); } }
+  @media (min-width: 560px) { .foot__groups { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 860px) {
+    .foot__cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .foot__cols > :last-child { grid-column: auto; }
+    .foot__groups { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (min-width: 1180px) {
+    .foot__top,
+    .foot__svc { grid-template-columns: minmax(0, 19rem) minmax(0, 1fr); gap: var(--s-10); }
+    .foot__svc-head { display: block; }
+    .foot__svc-head .foot__h { margin-bottom: var(--s-5); }
+  }
 </style>

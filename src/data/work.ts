@@ -122,7 +122,7 @@ export const caseStudies: CaseStudy[] = [
       alt: 'Campaign layout for Maa Sharda Industries titled "From hype to happening", pairing a hero chimney creative with supporting posts.',
       caption: 'Campaign presentation: "From hype to happening"',
     },
-    services: ['social-media-management', 'branding-design'],
+    services: ['social-media-management', 'graphic-design'],
   },
   {
     slug: 'navata',
@@ -149,7 +149,7 @@ export const caseStudies: CaseStudy[] = [
       'Grid of social media posts designed for Navata Appliances, featuring mixer grinders, hand blenders, sandwich makers and pressure cookers with bilingual headlines.',
     gallery: galleryFor('navata'),
     films: [films.blender, films.line],
-    services: ['social-media-management', 'content-production'],
+    services: ['social-media-management', 'graphic-design', 'product-shoots', 'reels-video-editing'],
   },
   {
     slug: 'maa-banbhori',
@@ -174,7 +174,7 @@ export const caseStudies: CaseStudy[] = [
     coverAlt:
       'Grid of social media posts designed for Maa Banbhori Plastic Works, covering garbage bags, printed packaging pouches and business-to-business call-to-action posts.',
     gallery: galleryFor('maa-banbhori'),
-    services: ['social-media-management', 'paid-ads-lead-generation'],
+    services: ['social-media-management', 'graphic-design', 'paid-ads-lead-generation'],
   },
 ];
 

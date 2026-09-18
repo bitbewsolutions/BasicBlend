@@ -11,7 +11,7 @@ import CtaBand from '../../components/CtaBand.astro';
 import Bolt from '../../components/Bolt.astro';
 import { services, type Service } from '../../data/services';
 import { caseStudies, films } from '../../data/work';
-import { SITE_URL, whatsappLink } from '../../data/site';
+import { site, SITE_URL, whatsappLink } from '../../data/site';
 
 export function getStaticPaths() {
   return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
@@ -32,12 +32,28 @@ const schema = {
   description: service.intro,
   serviceType: service.title,
   provider: { '@id': `${SITE_URL}/#business` },
-  areaServed: { '@type': 'Country', name: 'India' },
+  areaServed: [
+    ...site.areaServed.map((name) => ({ '@type': 'City', name })),
+    { '@type': 'Country', name: 'India' },
+  ],
   url: `${SITE_URL}/services/${service.slug}/`,
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: service.title,
+    itemListElement: service.items.map((name) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name },
+    })),
+  },
 };
 ---
 
-<Base title={`${service.title} in Chandigarh | BasicBlend`} description={service.metaDescription} schema={schema}>
+<Base
+  title={`${service.seoTitle} | BasicBlend`}
+  description={service.metaDescription}
+  keywords={service.keywords}
+  schema={schema}
+>
   <PageHero
     title={service.title}
     lead={service.intro}
@@ -104,7 +120,7 @@ const schema = {
     <section class="section on-plum" aria-labelledby="proof-title">
       <div class="shell">
         <SectionHead label="Work" id="proof-title" title="Related work" align="wide" />
-        <div class="svc-cases">
+        <div class:list={['svc-cases', relatedCases.length === 1 && 'svc-cases--single']}>
           {relatedCases.map((study, i) => <CaseCard study={study} delay={i * 90} />)}
         </div>
       </div>
@@ -144,6 +160,8 @@ const schema = {
   @media (min-width: 760px) {
     .svc-detail__items { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--s-6); }
     .svc-cases { grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: var(--s-6); }
+    /* One case alone would stretch to the full shell; keep it at card size. */
+    .svc-cases--single { grid-template-columns: minmax(0, 36rem); }
   }
   @media (min-width: 1024px) {
     .svc-detail { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--s-9); }

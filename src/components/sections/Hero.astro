@@ -11,6 +11,10 @@ import { services } from '../../data/services';
  * All three brand colours meet here. The second line sits on a solid purple
  * slab with ink type — the treatment on page 2 of the client's catalogue —
  * rather than as light violet text on black.
+ *
+ * The film is a desktop-only companion to the headline. In one column it would
+ * fall below the service links as a lone reel, and The Blend directly below
+ * already leads with footage, so under 1024px it is hidden and never loads.
  */
 const quick = ['branding-design', 'websites-platforms', 'social-media-management', 'paid-ads-lead-generation']
   .map((slug) => services.find((s) => s.slug === slug)!);
@@ -27,8 +31,8 @@ const quick = ['branding-design', 'websites-platforms', 'social-media-management
       </h1>
 
       <p class="hero__lead lead" data-reveal style="--reveal-delay:360ms">
-        BasicBlend is a Chandigarh studio that builds brands, websites, platforms, content and ad
-        campaigns. We work with businesses just getting started, companies ready to grow, and
+        Basic Blend is a digital marketing agency in Chandigarh. We build brands, websites, content
+        and ad campaigns for businesses just getting started, companies ready to grow, and
         established names alike.
       </p>
 
@@ -126,7 +130,7 @@ const quick = ['branding-design', 'websites-platforms', 'social-media-management
   .hero__quick a:hover { color: var(--cream); }
   .hero__quick a:hover span:last-child { transform: translateX(4px); }
 
-  .hero__reel { margin: 0; justify-self: start; width: min(15rem, 62vw); }
+  .hero__reel { display: none; margin: 0; }
   .hero__reel-frame { padding: var(--s-3); }
   .hero__video { width: 100%; height: auto; aspect-ratio: 352 / 624; object-fit: cover; background: var(--plum); }
   .hero__reel-cap { display: grid; gap: var(--s-1); margin-top: var(--s-4); }
@@ -142,7 +146,6 @@ const quick = ['branding-design', 'websites-platforms', 'social-media-management
   }
 
   @media (min-width: 760px) {
-    .hero__reel { width: min(17rem, 40vw); }
     .hero__quick ul { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); }
     .hero__quick li { border-bottom: 0; }
     .hero__quick a { padding-block: var(--s-4) 0; }
@@ -151,7 +154,7 @@ const quick = ['branding-design', 'websites-platforms', 'social-media-management
   @media (min-width: 1024px) {
     .hero__inner { grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-10); align-items: end; }
     .hero__title { font-size: var(--t-mega-wide); }
-    .hero__reel { justify-self: end; width: 17.5rem; }
+    .hero__reel { display: block; justify-self: end; width: 17.5rem; }
   }
 
   @media (max-height: 460px) and (orientation: landscape) {
@@ -170,8 +173,12 @@ const quick = ['branding-design', 'websites-platforms', 'social-media-management
    * src until after `load`, then it plays only while on screen.
    */
   const video = document.querySelector<HTMLVideoElement>('.hero__video');
+  const wide = window.matchMedia('(min-width: 1024px)');
   if (video && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let started = false;
     const start = () => {
+      if (started || !wide.matches) return;
+      started = true;
       if (video.dataset.src) video.src = video.dataset.src;
       new IntersectionObserver(
         (entries) => {
@@ -183,5 +190,7 @@ const quick = ['branding-design', 'websites-platforms', 'social-media-management
     const defer = () =>
       'requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 1200 }) : setTimeout(start, 400);
     document.readyState === 'complete' ? defer() : addEventListener('load', defer, { once: true });
+    // A tablet rotated to landscape can cross 1024px after load.
+    wide.addEventListener('change', start);
   }
 </script>

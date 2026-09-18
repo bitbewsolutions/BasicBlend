@@ -237,8 +237,8 @@ The delivered work is practical, product-first and unpretentious.
 2. The six clients may be named publicly. Their work was supplied inside a sales catalogue clearly
    intended to be shown to prospects, which implies consent to display.
 3. Jurisdiction for the legal pages is Chandigarh, India, inferred from the registered address.
-4. `SITE_URL` in `src/data/site.ts` is a placeholder (`https://basicblend.netlify.app`) until the
-   real domain is known. It feeds canonical URLs, OG tags, sitemap and the legal pages — **one value
+4. `SITE_URL` in `src/data/site.ts` is `https://www.basicblend.in` (resolved 18 Sep 2026; it was a
+   netlify.app placeholder until the domain went live). It feeds canonical URLs, OG tags, sitemap and the legal pages — **one value
    to change.**
 5. The contact form uses Netlify Forms because the deploy target is Netlify and no backend was
    specified. WhatsApp, phone and email are offered alongside, so the page converts even if forms

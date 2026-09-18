@@ -2,7 +2,8 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import { site, SITE_URL } from '../data/site';
+import { site, SITE_URL, siteKeywords, tracking } from '../data/site';
+import { services } from '../data/services';
 
 interface Props {
   title: string;
@@ -11,9 +12,25 @@ interface Props {
   noindex?: boolean;
   /** Extra JSON-LD for this page, e.g. a Service. */
   schema?: Record<string, unknown>;
+  /** Page-specific keywords meta. Falls back to the site-wide list. */
+  keywords?: string[];
+  /** Report a conversion to Google Analytics and Meta when this page loads. */
+  conversion?: 'lead';
 }
 
-const { title, description = site.description, noindex = false, schema: pageSchema } = Astro.props;
+const {
+  title,
+  description = site.description,
+  noindex = false,
+  schema: pageSchema,
+  keywords,
+  conversion,
+} = Astro.props;
+
+const keywordsMeta = (keywords ? [...keywords, site.legalName, site.name] : siteKeywords).join(', ');
+const isHome = Astro.url.pathname === '/';
+// Tags only run on the deployed site, never in `astro dev`.
+const track = import.meta.env.PROD;
 
 // URLs are built with trailing slashes (trailingSlash: 'always'); the canonical matches.
 const canonical = new URL(Astro.url.pathname, SITE_URL).href;
@@ -29,6 +46,7 @@ const business = {
   '@type': ['ProfessionalService', 'LocalBusiness'],
   '@id': `${SITE_URL}/#business`,
   name: site.name,
+  alternateName: site.alternateNames,
   legalName: site.legalName,
   description: site.description,
   url: `${SITE_URL}/`,
@@ -46,9 +64,36 @@ const business = {
   },
   geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
   hasMap: site.links.maps,
-  areaServed: { '@type': 'Country', name: 'India' },
+  areaServed: [
+    ...site.areaServed.map((name) => ({ '@type': 'City', name })),
+    { '@type': 'Country', name: 'India' },
+  ],
   sameAs: [site.links.instagram, site.links.facebook],
   knowsLanguage: ['en', 'hi'],
+  knowsAbout: ['Digital marketing', ...services.map((s) => s.title)],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Digital marketing services',
+    itemListElement: services.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.title, url: `${SITE_URL}/services/${s.slug}/` },
+    })),
+  },
+};
+
+/**
+ * WebSite data on the home page is what Google reads for the site name shown
+ * in results. alternateName ties "Basic Blend" (with a space) to this site.
+ */
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  name: site.legalName,
+  alternateName: [site.name, ...site.alternateNames.filter((n) => n !== site.legalName)],
+  url: `${SITE_URL}/`,
+  publisher: { '@id': `${SITE_URL}/#business` },
+  inLanguage: 'en-IN',
 };
 ---
 
@@ -61,8 +106,15 @@ const business = {
     <script is:inline>document.documentElement.classList.add('js');</script>
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywordsMeta} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
+    />
+    {tracking.googleSiteVerification && (
+      <meta name="google-site-verification" content={tracking.googleSiteVerification} />
+    )}
 
     <meta name="theme-color" content="#000000" />
     <meta name="color-scheme" content="dark" />
@@ -94,10 +146,74 @@ const business = {
     <meta name="geo.placename" content="Chandigarh" />
 
     <script type="application/ld+json" set:html={JSON.stringify(business)} />
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(website)} />}
     {pageSchema && <script type="application/ld+json" set:html={JSON.stringify(pageSchema)} />}
+
+    {track && (
+      <Fragment>
+        <!-- Google tag (gtag.js): Google Analytics 4 -->
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${tracking.ga4}`}></script>
+        <script is:inline define:vars={{ ga4: tracking.ga4 }}>
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () { dataLayer.push(arguments); };
+          gtag('js', new Date());
+          gtag('config', ga4);
+        </script>
+
+        <!-- Meta Pixel -->
+        <script is:inline define:vars={{ pixel: tracking.metaPixel }}>
+          !function(f,b,e,v,n,t,s)
+          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+          n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t,s)}(window, document,'script',
+          'https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', pixel);
+          fbq('track', 'PageView');
+        </script>
+
+        <!--
+          Conversion signals for ad optimisation. A click on WhatsApp, phone or
+          email counts as a contact; landing on /thanks/ from this site counts
+          as a lead (the enquiry form redirects there). Links marked
+          data-no-track (the Bitbew credit) are not the client's leads.
+        -->
+        <script is:inline define:vars={{ conversion: conversion ?? null }}>
+          var send = function (ga, meta, params) {
+            if (window.gtag) gtag('event', ga, params);
+            if (window.fbq) fbq('track', meta, params);
+          };
+          document.addEventListener('click', function (e) {
+            var a = e.target.closest && e.target.closest('a[href]');
+            if (!a || a.hasAttribute('data-no-track')) return;
+            var href = a.getAttribute('href') || '';
+            var method = href.indexOf('https://wa.me/') === 0 ? 'whatsapp'
+              : href.indexOf('tel:') === 0 ? 'phone'
+              : href.indexOf('mailto:') === 0 ? 'email' : null;
+            if (method) send('contact', 'Contact', { method: method });
+          });
+          if (conversion === 'lead' && document.referrer.indexOf(location.origin) === 0) {
+            send('generate_lead', 'Lead', { form: 'enquiry' });
+          }
+        </script>
+      </Fragment>
+    )}
   </head>
 
   <body>
+    {track && (
+      <noscript>
+        <img
+          height="1"
+          width="1"
+          style="display:none"
+          alt=""
+          src={`https://www.facebook.com/tr?id=${tracking.metaPixel}&ev=PageView&noscript=1`}
+        />
+      </noscript>
+    )}
     <a class="skip-link" href="#main">Skip to content</a>
     <Nav />
     <main id="main">

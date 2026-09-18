@@ -8,20 +8,27 @@ request, the palette moved to the client's stated brand colours (black, purple, 
 positioning was widened to businesses of every kind and stage, and all volume figures were removed.
 What changed and why is recorded in §9.
 
+**Revision 3 (18 Sep 2026).** Five services added (graphic design, reels & video editing, product
+shoots, UGC, AI video), services grouped, footer restructured, SEO and ad tracking added. See §9a.
+
 ---
 
 ## 1. Sitemap
 
 ```
 /                                      Home — a summary with exits to every section
-/services/                             All services, who they suit, the process
-/services/branding-design/             ┐
+/services/                             All services, grouped, who they suit, the process
+/services/branding-design/             ┐  Brand & web
+/services/graphic-design/              │
 /services/websites-platforms/          │
-/services/social-media-management/     │  One page per service, generated from
-/services/paid-ads-lead-generation/    │  src/data/services.ts
-/services/content-production/          │
-/services/influencer-marketing/        │
-/services/google-business-profile/     ┘
+/services/social-media-management/     │  Growth marketing
+/services/paid-ads-lead-generation/    │    One page per service, generated from
+/services/influencer-marketing/        │    src/data/services.ts
+/services/google-business-profile/     │
+/services/reels-video-editing/         │  Content & video
+/services/product-shoots/              │
+/services/ugc-content-creation/        │
+/services/ai-video-creation/           ┘
 /work/                                 Case studies, films, identities
 /work/maa-sharda/                      ┐
 /work/navata/                          │  One page per case, generated from src/data/work.ts
@@ -33,7 +40,7 @@ What changed and why is recorded in §9.
 /404                                   Not found — noindex
 ```
 
-19 pages. Every URL ends in a slash (`trailingSlash: 'always'`), and canonical tags, internal links
+23 pages. Every URL ends in a slash (`trailingSlash: 'always'`), and canonical tags, internal links
 and the sitemap all agree on it.
 
 **Why separate service pages.** Each is a real landing page for a search someone actually makes
@@ -59,7 +66,7 @@ section gives just enough to decide and then hands off:
 | Hero | Tagline, what we do, both CTAs, four service shortcuts | `/contact/`, `/work/`, service pages |
 | The Blend *(showpiece)* | Raw footage → delivered campaign, scroll-scrubbed | — |
 | Who we work with | Four audiences: starting out, growing, product & trade, software & services | — |
-| Services | Seven full-row links | each service page, `/services/` |
+| Services | Full-row links in three groups | each service page, `/services/` |
 | Selected work | Three image-led case cards | each case page, `/work/` |
 | Filmstrip | Real creatives in motion | — |
 | Process | Four steps | `/about/` |
@@ -75,11 +82,11 @@ for" → **proof, only where real work exists** → how it runs → other servic
 
 | Service | Proof shown |
 |---|---|
-| Branding & design | The three identity deliverables |
-| Social media management | Related case studies |
-| Paid ads & lead generation | Related case study |
-| Content & production | The three production films |
-| Websites, platforms & automation · Influencer marketing · Google Business Profile | None — no such work was supplied, so none is implied |
+| Branding & logo design | The three identity deliverables |
+| Graphic design · Social media management | Related case studies (all three) |
+| Performance marketing & ads · Product shoots | Related case study (one, shown at card size) |
+| Reels & video editing | The three production films |
+| Websites · Influencer marketing · Google Business Profile · UGC · AI video | None — no such work was supplied, so none is implied |
 
 ### Work
 `/work/` lists the three cases as alternating image-and-text plates, then films, then identities.
@@ -218,7 +225,7 @@ width, and the home page's primary CTA above the fold at all of them.
 
 ## 8. Accessibility, SEO, performance
 
-**Accessibility.** One `h1` per page and no skipped heading levels on any of the 19 pages; every
+**Accessibility.** One `h1` per page and no skipped heading levels on any of the 23 pages; every
 image has alt text; every input is labelled; focus-trapped mobile menu with Esc and focus return;
 visible orange focus ring; breadcrumbs with `aria-current`; video sound is opt-in with a real
 toggle.
@@ -249,10 +256,25 @@ CLS 0. Images are WebP at explicit sizes; videos attach their source only near t
 
 ---
 
+## 9a. Revision 3 — what changed and why
+
+| Change | Reason |
+|---|---|
+| Content & production split into Reels & video editing, Product shoots, UGC content creation, AI video creation; Graphic design split out of Branding | Client's service list. Each is now its own landing page for its own searches. `/services/content-production/` 301s to reels (`public/_redirects`) |
+| Services carry a `group`; lists, footer and the form's dropdown are grouped | Eleven flat rows were a wall |
+| Footer: each block starts on a strong rule under a display-face heading; services moved to their own grouped band | Client found the sections hard to tell apart |
+| Home hero film hidden below 1024px | In one column it fell below the service links as a lone reel; The Blend directly below already leads with footage |
+| "Basic Blend" (with a space) in titles, lead copy, `alternateName`, and a `WebSite` schema on the home page | Google treats "basicblend" and "basic blend" as different queries |
+| Keyword research worked into titles (`seoTitle`), intros and items; `keywords` per service | Client's Google Keyword Planner list. Phrases used only where they read naturally |
+| GA4 + Meta Pixel (production builds only), `contact` / `Contact` on WhatsApp/phone/email taps, `generate_lead` / `Lead` on `/thanks/` | Client-supplied tags; conversion events let Google and Meta ads optimise for enquiries. Privacy policy §6 updated to disclose both |
+| `/sitemap.xml` → `/sitemap-index.xml` | Tools that only look at the conventional path |
+
+---
+
 ## 10. Code organisation
 
 ```
-src/data/        site.ts · services.ts (7 services, audiences, process, reasons) · work.ts (cases, films, identities)
+src/data/        site.ts (facts, tracking IDs, keywords) · services.ts (11 services in 3 groups, audiences, process, reasons) · work.ts (cases, films, identities)
 src/layouts/     Base.astro (head, SEO, JSON-LD, reveal script) · Legal.astro
 src/components/  Nav · Footer · PageHero · Breadcrumbs · SectionHead · CtaBand · ServiceIndex ·
                  AudienceGrid · ProcessSteps · CaseCard · CasePlate · SpecPlate · CreativeStrip ·

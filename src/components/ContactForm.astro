@@ -1,5 +1,5 @@
 ---
-import { services } from '../data/services';
+import { groupServices } from '../data/services';
 import { whatsappLink } from '../data/site';
 
 /**
@@ -48,7 +48,11 @@ import { whatsappLink } from '../data/site';
     <label for="cf-need" class="spec spec--sm">What do you need?</label>
     <select id="cf-need" name="need" data-need>
       <option value="">Not sure yet</option>
-      {services.map((s) => <option value={s.slug}>{s.title}</option>)}
+      {groupServices().map((g) => (
+        <optgroup label={g.label}>
+          {g.services.map((s) => <option value={s.slug}>{s.title}</option>)}
+        </optgroup>
+      ))}
       <option value="several">A mix of these</option>
     </select>
   </div>

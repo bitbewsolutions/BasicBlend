@@ -6,16 +6,25 @@
  * that source states it is "not to be shown anywhere".
  */
 
-/** Single source of truth for the domain. Mirrored in astro.config.mjs. */
-export const SITE_URL = 'https://basicblend.netlify.app';
+/**
+ * Single source of truth for the domain. Mirrored in astro.config.mjs.
+ * www is the primary on Netlify: basicblend.in 301s to it.
+ */
+export const SITE_URL = 'https://www.basicblend.in';
 
 export const site = {
   name: 'BasicBlend',
   legalName: 'Basic Blend',
+  /**
+   * Every spelling people search for. Google treats "basicblend" and
+   * "basic blend" as different queries, so both forms appear in titles, copy
+   * and structured data.
+   */
+  alternateNames: ['Basic Blend', 'BasicBlend Digital Marketing Agency'],
   tagline: 'Your brand, our blend.',
   /** ~155 chars, used as the default meta description. */
   description:
-    'BasicBlend is a Chandigarh studio for branding, websites, platforms, social media, content and ads, working with new businesses, growing companies and established brands.',
+    'Basic Blend (BasicBlend) is a digital marketing agency in Chandigarh for branding, logo design, websites, social media, performance ads, reels and video production.',
 
   phone: '8427327988',
   phoneIntl: '+918427327988',
@@ -35,6 +44,9 @@ export const site = {
   /** Chandigarh Sector 22-D. Approximate, for LocalBusiness structured data. */
   geo: { lat: 30.7372, lng: 76.7825 },
 
+  /** Local area for structured data. The studio also works with clients across India. */
+  areaServed: ['Chandigarh', 'Mohali', 'Panchkula', 'Zirakpur'],
+
   links: {
     instagram: 'https://www.instagram.com/basicblend007',
     facebook: 'https://www.facebook.com/profile.php?id=61574846077556',
@@ -46,6 +58,43 @@ export const site = {
     instagram: '@basicblend007',
     facebook: 'Basic Blend',
   },
+} as const;
+
+/**
+ * Default keywords meta for pages without their own. Google ignores this tag;
+ * Bing and some directories still read it. Rankings come from titles, headings
+ * and copy, which carry the same phrases.
+ */
+export const siteKeywords = [
+  'Basic Blend',
+  'BasicBlend',
+  'digital marketing agency Chandigarh',
+  'digital marketing company',
+  'marketing agency',
+  'online marketing',
+  'performance marketing',
+  'digital branding',
+  'social media marketing',
+  'website development',
+  'logo design',
+  'influencer marketing',
+  'video production',
+];
+
+/**
+ * Tracking IDs supplied by the client. Tags load only in production builds, so
+ * local development never pollutes the reports.
+ */
+export const tracking = {
+  /** Google Analytics 4 measurement ID (gtag.js). */
+  ga4: 'G-SG5X0FNJT9',
+  /** Meta (Facebook/Instagram) Pixel ID. */
+  metaPixel: '2232289700950550',
+  /**
+   * Google Search Console "HTML tag" verification token — the value of the
+   * content="" attribute only. Leave empty if verified another way.
+   */
+  googleSiteVerification: '',
 } as const;
 
 /** WhatsApp deep link with a prefilled opener. */

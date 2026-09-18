@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 
 // SITE_URL is mirrored in src/data/site.ts — change both if the domain moves.
 export default defineConfig({
-  site: 'https://basicblend.netlify.app',
+  site: 'https://www.basicblend.in',
   integrations: [
     sitemap({
       // /thanks is a post-submit confirmation; it has no search value.

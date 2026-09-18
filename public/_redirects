@@ -1,0 +1,12 @@
+# The Netlify subdomain still serves the site. Send it to the real domain so
+# Google sees one copy, not two. (The bare basicblend.in → www redirect is
+# handled by Netlify's domain settings.)
+https://basicblend.netlify.app/*   https://www.basicblend.in/:splat   301!
+
+# Content & production was split into four services (Sep 2026). Keep old
+# links, ads and search results working.
+/services/content-production/   /services/reels-video-editing/   301
+/services/content-production    /services/reels-video-editing/   301
+
+# Astro writes sitemap-index.xml; many tools only look for /sitemap.xml.
+/sitemap.xml   /sitemap-index.xml   200

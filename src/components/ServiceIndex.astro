@@ -1,9 +1,13 @@
 ---
-import { services } from '../data/services';
+import { services, groupServices } from '../data/services';
 
 /**
- * Services as an index of full-row links — one row per service page.
+ * Services as an index of full-row links — one row per service page, under a
+ * label for each group (Brand & web, Growth marketing, Content & video).
  * `compact` (home): title + summary. `full` (services page): adds what's included.
+ *
+ * Heading levels assume the index sits under a section h2: groups are h3,
+ * service titles h4.
  */
 interface Props {
   variant?: 'compact' | 'full';
@@ -11,28 +15,44 @@ interface Props {
   exclude?: string;
 }
 const { variant = 'compact', exclude } = Astro.props;
-const list = services.filter((s) => s.slug !== exclude);
+const groups = groupServices(services.filter((s) => s.slug !== exclude));
+let n = 0;
 ---
 
-<ul class:list={['svc', `svc--${variant}`]}>
-  {list.map((s, i) => (
-    <li data-reveal style={`--reveal-delay:${i * 50}ms`}>
-      <a class="svc__row" href={`/services/${s.slug}/`}>
-        <h3 class="svc__title display display--title">{s.title}</h3>
-        <span class="svc__body">
-          <span class="svc__summary">{s.summary}</span>
-          {variant === 'full' && (
-            <span class="svc__items meta">{s.items.slice(0, 4).join(' / ')}</span>
-          )}
-        </span>
-        <span class="svc__arrow" aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
+<div class:list={['svc', `svc--${variant}`]}>
+  {groups.map((g) => (
+    <section class="svc__group" aria-labelledby={`svc-${g.id}`}>
+      <h3 class="svc__group-label spec spec--sm" id={`svc-${g.id}`}>
+        {g.label}
+      </h3>
+      <ul>
+        {g.services.map((s) => (
+          <li data-reveal style={`--reveal-delay:${Math.min(n++, 6) * 50}ms`}>
+            <a class="svc__row" href={`/services/${s.slug}/`}>
+              <h4 class="svc__title display display--title">{s.title}</h4>
+              <span class="svc__body">
+                <span class="svc__summary">{s.summary}</span>
+                {variant === 'full' && (
+                  <span class="svc__items meta">{s.items.slice(0, 4).join(' / ')}</span>
+                )}
+              </span>
+              <span class="svc__arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
   ))}
-</ul>
+</div>
 
 <style>
-  .svc { border-top: 1px solid var(--rule-dark); }
+  .svc { display: grid; gap: var(--s-8); }
+  .svc__group-label {
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid var(--rule-dark-strong);
+    color: var(--cream);
+  }
+  .on-paper .svc__group-label { color: var(--ink); border-bottom-color: var(--rule-light-strong); }
   .svc li { border-bottom: 1px solid var(--rule-dark); }
 
   .svc__row {

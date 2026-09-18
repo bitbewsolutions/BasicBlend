@@ -4,8 +4,8 @@ import { site, SITE_URL, addressLines } from '../data/site';
 
 /**
  * Content follows the supplied privacy-policy document. The only edit is
- * resolving "[Insert Website URL]" to SITE_URL, plus a cookies note that
- * matches what this site actually does (it sets no analytics cookies today).
+ * resolving "[Insert Website URL]" to SITE_URL, plus a cookies section that
+ * matches what this site actually does: Google Analytics and the Meta Pixel.
  */
 const host = SITE_URL.replace(/^https?:\/\//, '');
 ---
@@ -15,7 +15,7 @@ const host = SITE_URL.replace(/^https?:\/\//, '');
   metaTitle={`Privacy policy — ${site.name}`}
   description={`How ${site.name} collects, uses and safeguards your personal information.`}
   lead="How we collect, use, disclose and safeguard your data when you visit this site or engage our services."
-  updated="12 September 2026"
+  updated="18 September 2026"
 >
   <p>
     {site.legalName} respects your privacy and is committed to protecting your personal
@@ -109,12 +109,25 @@ const host = SITE_URL.replace(/^https?:\/\//, '');
   </p>
 
   <h2>6. Cookies and tracking</h2>
+  <p>This website uses two third-party measurement tools, which set cookies in your browser:</p>
+  <ul>
+    <li>
+      <strong>Google Analytics</strong> (Google LLC) — to understand how visitors find and use
+      the site, such as which pages are viewed and where visits come from.
+    </li>
+    <li>
+      <strong>Meta Pixel</strong> (Meta Platforms, Inc.) — to measure the results of our
+      advertising on Facebook and Instagram and to show relevant ads to people who have
+      visited the site.
+    </li>
+  </ul>
   <p>
-    This website does not currently set analytics or advertising cookies of its own. Where
-    cookies, web beacons or similar technologies are used in future to enhance your
-    browsing experience, analyse traffic or personalise content, you will be able to
-    configure your browser to refuse them — though some features may then not function
-    properly.
+    These tools record events such as page views, an enquiry being sent, or a tap on our
+    WhatsApp, phone or email links. They do not receive the contents of the enquiry form.
+    Google and Meta process this data under their own privacy policies. You can refuse or
+    delete cookies in your browser settings, install the
+    <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Google Analytics opt-out add-on</a>,
+    and manage ad preferences in your Facebook or Instagram account settings.
   </p>
   <p>
     Our contact form is processed by our hosting provider, which may log technical request

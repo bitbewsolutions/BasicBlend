@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://basicblend.netlify.app/sitemap-index.xml
+Sitemap: https://www.basicblend.in/sitemap-index.xml
