@@ -3,9 +3,15 @@ import { groupServices } from '../data/services';
 import { whatsappLink } from '../data/site';
 
 /**
- * Enquiry form. Posts to Netlify Forms (the deploy target; no backend was
- * specified) with a honeypot for spam. `service` preselects the "what do you
- * need" field when arriving from a service page (?service=slug).
+ * Enquiry form.
+ *
+ * Submits to Supabase, where the client reads it in /admin/ and a database
+ * webhook emails him. If that fails for any reason — offline, Supabase down,
+ * a blocked request — the form falls back to its plain Netlify Forms POST
+ * rather than losing the enquiry. Both paths end on /thanks/.
+ *
+ * The honeypot stays: it catches the bots that fill every field.
+ * `service` preselects the "what do you need" field (?service=slug).
  */
 ---
 
@@ -112,6 +118,8 @@ import { whatsappLink } from '../data/site';
   .cf input:user-invalid, .cf textarea:user-invalid { border-color: #e08a8a; }
 
   .cf__submit { justify-self: start; margin-top: var(--s-2); }
+  .cf__submit:disabled { opacity: 0.6; cursor: progress; }
+  .cf__status:empty { display: none; }
   .cf__alt a { color: var(--orange); text-decoration: underline; text-underline-offset: 0.2em; }
 
   @media (min-width: 560px) {
@@ -126,5 +134,55 @@ import { whatsappLink } from '../data/site';
   const wanted = new URLSearchParams(location.search).get('service');
   if (select && wanted && [...select.options].some((o) => o.value === wanted)) {
     select.value = wanted;
+  }
+
+  const form = document.querySelector<HTMLFormElement>('form.cf');
+  const url = import.meta.env.PUBLIC_SUPABASE_URL;
+  const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+
+  if (form && url && key) {
+    const submit = form.querySelector<HTMLButtonElement>('.cf__submit');
+    const status = document.createElement('p');
+    status.className = 'meta cf__status';
+    status.setAttribute('role', 'status');
+    submit?.after(status);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const data = new FormData(form);
+      // A filled honeypot is a bot. Behave exactly as if it worked.
+      if ((data.get('bot-field') as string)?.trim()) {
+        location.assign('/thanks/');
+        return;
+      }
+
+      if (submit) submit.disabled = true;
+      status.textContent = 'Sending…';
+
+      try {
+        const res = await fetch(`${url}/rest/v1/enquiries`, {
+          method: 'POST',
+          headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: (data.get('name') as string)?.trim(),
+            business: (data.get('business') as string)?.trim() || null,
+            phone: (data.get('phone') as string)?.trim(),
+            email: (data.get('email') as string)?.trim() || null,
+            need: (data.get('need') as string) || null,
+            message: (data.get('message') as string)?.trim(),
+            source_path: location.pathname + location.search,
+          }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        location.assign('/thanks/');
+      } catch (error) {
+        // Hand it to Netlify Forms instead of telling someone their enquiry
+        // failed. form.submit() skips this listener.
+        console.error('Enquiry could not be saved to Supabase; falling back.', error);
+        form.submit();
+      }
+    });
   }
 </script>

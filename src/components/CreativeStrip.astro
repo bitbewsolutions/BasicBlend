@@ -1,6 +1,6 @@
 ---
-import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
+import Pic from './Pic.astro';
+import type { GalleryItem } from '../data/work';
 
 /**
  * Individual creatives from a case, in a horizontally scrolling strip.
@@ -9,7 +9,7 @@ import type { ImageMetadata } from 'astro';
  * strip and scroll it with the arrow keys.
  */
 interface Props {
-  images: ImageMetadata[];
+  images: GalleryItem[];
   client: string;
 }
 const { images, client } = Astro.props;
@@ -17,14 +17,13 @@ const { images, client } = Astro.props;
 
 <div class="cs" role="region" aria-label={`Creatives designed for ${client}`} tabindex="0">
   <ul class="cs__track">
-    {images.map((img, i) => (
+    {images.map((item) => (
       <li class="cs__cell">
-        <Image
-          src={img}
-          alt={`Social media creative ${i + 1} designed for ${client}.`}
-          widths={[img.width]}
-          sizes={`${img.width}px`}
-          loading="lazy"
+        <Pic
+          image={item.image}
+          alt={item.alt}
+          widths={[item.image.width]}
+          sizes={`${item.image.width}px`}
         />
       </li>
     ))}

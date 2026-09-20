@@ -1,6 +1,8 @@
 ---
-import { Image } from 'astro:assets';
-import { identities } from '../data/work';
+import Pic from './Pic.astro';
+import { getIdentities } from '../lib/content';
+
+const identities = await getIdentities();
 
 /**
  * Logos BasicBlend designed. Presented as delivered work — never as a
@@ -12,8 +14,8 @@ import { identities } from '../data/work';
   {identities.map((id, i) => (
     <li data-reveal style={`--reveal-delay:${i * 90}ms`}>
       <figure class="ident__fig plate plate--inset">
-        <Image
-          src={id.image}
+        <Pic
+          image={id.image}
           alt={id.alt}
           widths={[320, 520]}
           sizes="(min-width: 760px) 22rem, 84vw"

@@ -1,4 +1,5 @@
 ---
+import { getImage } from 'astro:assets';
 import Bolt from './Bolt.astro';
 import type { Film } from '../data/work';
 
@@ -14,6 +15,15 @@ interface Props {
   films: Film[];
 }
 const { films } = Astro.props;
+
+// A <video> poster is an attribute, not an <img>, so it cannot go through <Pic>.
+// Resolving it here still runs it through the image pipeline: the poster ships
+// as a sized WebP from our own domain rather than being pulled from Supabase.
+const posters = await Promise.all(
+  films.map((film) =>
+    getImage({ src: film.poster.src, width: 352, height: 624, format: 'webp' })
+  )
+);
 ---
 
 <ul class="films" data-films>
@@ -24,7 +34,7 @@ const { films } = Astro.props;
           <video
             class="film__video"
             data-src={film.src}
-            poster={film.poster}
+            poster={posters[i].src}
             width="352"
             height="624"
             muted

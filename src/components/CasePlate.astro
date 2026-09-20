@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import Pic from './Pic.astro';
 import Bolt from './Bolt.astro';
 import SpecPlate from './SpecPlate.astro';
 import type { CaseStudy } from '../data/work';
@@ -24,8 +24,8 @@ const href = `/work/${study.slug}/`;
 <article class:list={['case', flip && 'case--flip']} aria-labelledby={`case-${study.slug}`}>
   <figure class="case__media plate" data-wipe>
     <a class="case__img-link" href={href} tabindex="-1" aria-hidden="true">
-      <Image
-        src={study.cover}
+      <Pic
+        image={study.cover}
         alt={study.coverAlt}
         widths={[420, 640, 900, 1024]}
         sizes="(min-width: 1024px) 40rem, 92vw"

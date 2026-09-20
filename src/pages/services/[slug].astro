@@ -10,7 +10,7 @@ import FilmRow from '../../components/FilmRow.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import Bolt from '../../components/Bolt.astro';
 import { services, type Service } from '../../data/services';
-import { caseStudies, films } from '../../data/work';
+import { getCaseStudies, getFilms } from '../../lib/content';
 import { site, SITE_URL, whatsappLink } from '../../data/site';
 
 export function getStaticPaths() {
@@ -23,7 +23,7 @@ interface Props {
 const { service } = Astro.props;
 
 // Real work shown only where it genuinely exists for this service.
-const relatedCases = caseStudies.filter((c) => c.services.includes(service.slug));
+const relatedCases = (await getCaseStudies()).filter((c) => c.services.includes(service.slug));
 
 const schema = {
   '@context': 'https://schema.org',
@@ -111,7 +111,7 @@ const schema = {
           lead="Production films and behind-the-scenes footage from recent shoots."
           align="wide"
         />
-        <FilmRow films={[films.bts, films.blender, films.line]} />
+        <FilmRow films={await getFilms()} />
       </div>
     </section>
   )}

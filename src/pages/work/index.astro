@@ -6,7 +6,10 @@ import CasePlate from '../../components/CasePlate.astro';
 import IdentityGrid from '../../components/IdentityGrid.astro';
 import FilmRow from '../../components/FilmRow.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { caseStudies, films } from '../../data/work';
+import { getCaseStudies, getFilms } from '../../lib/content';
+
+const caseStudies = await getCaseStudies();
+const films = await getFilms();
 ---
 
 <Base
@@ -34,7 +37,7 @@ import { caseStudies, films } from '../../data/work';
         lead="We script, shoot and edit in-house, on factory floors, on production lines and in real kitchens."
         align="wide"
       />
-      <FilmRow films={[films.bts, films.blender, films.line]} />
+      <FilmRow films={films} />
     </div>
   </section>
 

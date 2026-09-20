@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import Pic from './Pic.astro';
 import type { CaseStudy } from '../data/work';
 
 /**
@@ -17,8 +17,8 @@ const { study, size = 'small', delay = 0 } = Astro.props;
 <article class:list={['cc', `cc--${size}`]} data-reveal style={`--reveal-delay:${delay}ms`}>
   <a class="cc__link" href={`/work/${study.slug}/`}>
     <figure class="cc__media plate">
-      <Image
-        src={study.cover}
+      <Pic
+        image={study.cover}
         alt={study.coverAlt}
         widths={size === 'large' ? [480, 720, 1024] : [360, 560, 720]}
         sizes={size === 'large' ? '(min-width: 1024px) 44rem, 92vw' : '(min-width: 1024px) 26rem, 92vw'}

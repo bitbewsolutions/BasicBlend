@@ -4,13 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "npm run sync:media && astro dev",
+    "build": "npm run sync:media && astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "sync:media": "node --env-file-if-exists=.env scripts/sync-media.mjs",
+    "seed": "node --env-file=.env scripts/seed-content.mjs",
+    "admin:create": "node --env-file=.env scripts/create-admin.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
+    "@supabase/supabase-js": "^2.116.0",
     "astro": "^7.3.2",
     "sharp": "^0.35.4"
   }

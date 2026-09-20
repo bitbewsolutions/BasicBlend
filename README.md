@@ -7,12 +7,23 @@ Built with [Astro](https://astro.build) as a static site, for deployment to Netl
 
 ```bash
 npm install
+cp .env.example .env   # then fill in the Supabase values (see docs/admin-panel.md)
 npm run dev      # http://localhost:4321
 npm run build    # static output into dist/
 npm run preview  # serve the built site
 ```
 
 Requires Node 22 (pinned in `netlify.toml`).
+
+**The build needs Supabase credentials.** Work content (projects, reels, logos) lives in Supabase
+and is read at build time; without `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` the build
+stops with a clear error rather than publishing a site with no work on it. `.env` is git-ignored.
+
+```bash
+npm run build          # sync reel videos, then build
+npm run admin:create -- me@basicblend.in 'a-long-password'   # grant admin access
+npm run seed -- --force                                       # re-import work from code (rare)
+```
 
 ## Deploying
 
@@ -43,7 +54,11 @@ is normal. Submit the index URL to Google Search Console and give it to Google A
 
 ```
 docs/          Read these first — the business reasoning and the design system
-src/data/      ALL copy and facts. Edit content here, never in markup
+src/data/      Page copy, services, business facts. Edit copy here, never in markup
+src/lib/       content.ts — reads the work (projects/reels/logos) from Supabase at build time
+src/scripts/   admin/ — the client's admin panel app
+scripts/       one-off and build scripts (seeding, admin users, media sync)
+supabase/      migrations (schema + row-level security) and Edge Functions
 src/styles/    tokens.css (every colour/space/type value) · global.css (base + primitives)
 src/components/          shared UI; sections/ holds the home-only Hero and Blend
 src/layouts/   Base.astro (head, meta, JSON-LD) · Legal.astro
@@ -58,6 +73,8 @@ public/        self-hosted fonts, videos + posters, favicon, OG image, _headers,
   questions for the client.
 - **`docs/website-architecture.md`** — creative direction, sitemap, section purposes, CTA strategy,
   motion plan, responsive rules, and the conventions to keep.
+- **`docs/admin-panel.md`** — the client's admin panel: how it works, how it is secured, what is
+  still to set up, and how to use it.
 
 ## Things to know before editing
 
@@ -70,6 +87,10 @@ public/        self-hosted fonts, videos + posters, favicon, OG image, _headers,
   architecture doc explains it.
 - **Add a service** by adding an entry to `src/data/services.ts` (with its `group`); its page, the
   grouped lists, the footer and the form options all follow.
+- **Work content is not in the repo any more.** Projects, reels and logos are managed by the client
+  at `/admin/` and read from Supabase at build time. See **`docs/admin-panel.md`** — it covers the
+  security model, the remaining setup steps (Netlify variables, build hook, Resend) and how to run
+  the panel. New work goes live only when someone presses Publish, which rebuilds the site.
 - **Footer credit.** `BuiltByBitbew.astro` is the last line of the footer. Its WhatsApp link is
   marked `data-no-track` so taps on it are never reported as the client's leads.
 - **Analytics.** Google Analytics 4 and the Meta Pixel load from `Base.astro`, in production builds

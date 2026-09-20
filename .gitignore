@@ -2,6 +2,11 @@ node_modules/
 dist/
 .astro/
 .netlify/
+.env
+.env.*
+!.env.example
+supabase/.temp/
+public/media/remote/
 .DS_Store
 *.log
 

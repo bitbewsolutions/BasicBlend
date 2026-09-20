@@ -1,7 +1,9 @@
 ---
-import { Image } from 'astro:assets';
+import Pic from './Pic.astro';
 import Bolt from './Bolt.astro';
-import { filmstrip } from '../data/work';
+import { getFilmstrip } from '../lib/content';
+
+const filmstrip = await getFilmstrip();
 
 /**
  * A continuous marquee of real client creatives, as a contact sheet in motion.
@@ -22,9 +24,9 @@ const strip = [...filmstrip, ...filmstrip];
         const copy = i >= filmstrip.length;
         return (
           <li class="strip__cell" aria-hidden={copy ? 'true' : undefined}>
-            <Image
-              src={cell.image}
-              alt={copy ? '' : `Social media creative designed for ${cell.client}.`}
+            <Pic
+              image={cell.image}
+              alt={copy ? '' : cell.alt}
               widths={[240, 360]}
               sizes="220px"
               loading="lazy"

@@ -8,6 +8,10 @@ request, the palette moved to the client's stated brand colours (black, purple, 
 positioning was widened to businesses of every kind and stage, and all volume figures were removed.
 What changed and why is recorded in §9.
 
+**Revision 4 (20 Sep 2026).** The work content moved out of the repo into Supabase, managed by the
+client at `/admin/`, and read at build time. The site is still fully static. See
+`admin-panel.md`; §9b records what changed.
+
 **Revision 3 (18 Sep 2026).** Five services added (graphic design, reels & video editing, product
 shoots, UGC, AI video), services grouped, footer restructured, SEO and ad tracking added. See §9a.
 
@@ -268,6 +272,21 @@ CLS 0. Images are WebP at explicit sizes; videos attach their source only near t
 | Keyword research worked into titles (`seoTitle`), intros and items; `keywords` per service | Client's Google Keyword Planner list. Phrases used only where they read naturally |
 | GA4 + Meta Pixel (production builds only), `contact` / `Contact` on WhatsApp/phone/email taps, `generate_lead` / `Lead` on `/thanks/` | Client-supplied tags; conversion events let Google and Meta ads optimise for enquiries. Privacy policy §6 updated to disclose both |
 | `/sitemap.xml` → `/sitemap-index.xml` | Tools that only look at the conventional path |
+
+---
+
+## 9b. Revision 4 — the admin panel
+
+| Change | Reason |
+|---|---|
+| Projects, reels and identities moved from `src/data/work.ts` to Supabase; `src/lib/content.ts` reads them at build time | The client asked to manage his own work. Reading at build time keeps every page static, indexable and independent of Supabase at runtime |
+| New `/admin/` page (own layout, noindex, robots-disallowed, no analytics) | The client's workspace is not a marketing surface, and his customers' enquiries are not marketing data |
+| Real authentication (Supabase Auth + a `public.admins` allowlist enforced by row-level security) rather than a shared page password | A static page cannot check a password; the data would have been readable by anyone with developer tools. Signing in is not sufficient either — the allowlist is the lock |
+| `Pic.astro` renders both local `ImageMetadata` and remote Supabase images | Remote work images still go through Astro's pipeline and ship as sized WebP from our own domain |
+| Reel videos copied into the build by `scripts/sync-media.mjs` | Keeps playback on Netlify's CDN instead of spending Supabase egress on every autoplay |
+| Contact form posts to Supabase, falling back to Netlify Forms | The client needs an inbox; the fallback means a failure never costs an enquiry |
+| Enquiry insert → Postgres trigger → `notify-enquiry` → Resend email with a deep link into the panel | He wanted to hear about enquiries without watching a dashboard |
+| Publish button → `trigger-build` → Netlify build hook | New work needs a rebuild; the hook is a secret, so it is used server-side and never sent to the browser |
 
 ---
 

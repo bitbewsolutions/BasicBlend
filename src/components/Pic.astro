@@ -1,0 +1,58 @@
+---
+import { Image } from 'astro:assets';
+import type { SiteImage } from '../data/work';
+
+/**
+ * One image component for both kinds of source: files imported from
+ * src/assets, and work uploaded to Supabase by the client.
+ *
+ * Both go through Astro's image pipeline and ship as sized WebP — a remote
+ * image is downloaded once at build time, not fetched by the visitor. The only
+ * difference is that a remote source has to be told its dimensions, which the
+ * admin panel measures on upload and stores.
+ */
+interface Props {
+  image: SiteImage;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  class?: string;
+}
+
+const { image, alt, widths, sizes, loading = 'lazy', class: cls, ...rest } = Astro.props;
+
+const remote = typeof image.src === 'string' && /^https?:\/\//.test(image.src);
+// Never upscale: a 900px original asked for at 1400px just gets blurry.
+const capped = widths?.filter((w) => w <= image.width);
+const resolved = capped?.length ? capped : [image.width];
+---
+
+{
+  remote ? (
+    <Image
+      src={image.src}
+      width={image.width}
+      height={image.height}
+      widths={resolved}
+      sizes={sizes}
+      alt={alt}
+      loading={loading}
+      decoding="async"
+      class={cls}
+      {...rest}
+    />
+  ) : (
+    <Image
+      src={image as ImageMetadata}
+      widths={resolved}
+      sizes={sizes}
+      alt={alt}
+      loading={loading}
+      decoding="async"
+      class={cls}
+      {...rest}
+    />
+  )
+}

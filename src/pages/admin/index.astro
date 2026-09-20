@@ -1,0 +1,87 @@
+---
+/**
+ * The client's admin panel.
+ *
+ * Deliberately NOT built on Base.astro: no marketing nav or footer, and no
+ * Google Analytics or Meta Pixel — the client working on his own site is not
+ * a visitor, and his enquiries are nobody's marketing data.
+ *
+ * Everything below the sign-in form is rendered by src/scripts/admin/, which
+ * only ever sees data the database is willing to hand a signed-in admin.
+ */
+import '../../styles/admin.css';
+import { site } from '../../data/site';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin — {site.name}</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/supreme-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/supreme-500.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+
+  <body class="admin">
+    <p class="boot" id="boot">Loading the panel…</p>
+
+    <!-- Sign-in gate. Shown until Supabase confirms a session AND that the
+         account is on the admin allowlist. -->
+    <div class="gate" id="gate" hidden>
+      <form class="gate__card" id="login-form" novalidate>
+        <h1 class="gate__title">BasicBlend <span>Admin</span></h1>
+        <p class="gate__lead">Enquiries and site content.</p>
+
+        <div class="field">
+          <label class="field__label" for="email">Email</label>
+          <input class="input" id="email" type="email" autocomplete="username" required />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="password">Password</label>
+          <input class="input" id="password" type="password" autocomplete="current-password" required />
+        </div>
+
+        <p class="gate__error" id="login-error" role="alert"></p>
+
+        <button class="btn btn--primary btn--block" type="submit"><span>Sign in</span></button>
+
+        <p class="gate__note">
+          Forgotten the password? Ask your developer to reset it; there is no email recovery on
+          this panel by design.
+        </p>
+      </form>
+    </div>
+
+    <!-- The panel itself. -->
+    <div class="shell" id="shell" hidden>
+      <header class="bar">
+        <a class="bar__mark" href="/" title="Open the website">
+          BasicBlend <span>Admin</span>
+        </a>
+        <div class="bar__right">
+          <span class="bar__state" id="publish-state"></span>
+          <button class="btn btn--ghost" id="publish" type="button"><span>Publish site</span></button>
+          <button class="btn btn--quiet" id="signout" type="button" title="Sign out"><span>Sign out</span></button>
+        </div>
+      </header>
+
+      <nav class="nav" id="nav" aria-label="Sections"></nav>
+
+      <main class="view" id="view" tabindex="-1"></main>
+    </div>
+
+    <noscript>
+      <p style="padding:2rem;color:#f1ebe0">The admin panel needs JavaScript switched on.</p>
+    </noscript>
+
+    <script>
+      import '../../scripts/admin/main';
+    </script>
+  </body>
+</html>

@@ -11,7 +11,7 @@ import ProcessSteps from '../components/ProcessSteps.astro';
 import CtaBand from '../components/CtaBand.astro';
 import Bolt from '../components/Bolt.astro';
 import { process } from '../data/services';
-import { caseStudies } from '../data/work';
+import { getCaseStudies } from '../lib/content';
 
 /**
  * The home page is a summary with exits, not the whole site. Each section
@@ -19,7 +19,7 @@ import { caseStudies } from '../data/work';
  * services → /services, work → /work and case pages, process → /about,
  * the form → /contact.
  */
-const [featured, ...rest] = caseStudies;
+const [featured, ...rest] = await getCaseStudies();
 ---
 
 <Base title="Basic Blend — Digital Marketing Agency in Chandigarh | BasicBlend">

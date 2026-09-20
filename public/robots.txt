@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# The client's admin panel. Nothing here is for search engines, and it needs a
+# sign-in anyway.
+Disallow: /admin/
+
 Sitemap: https://www.basicblend.in/sitemap-index.xml
